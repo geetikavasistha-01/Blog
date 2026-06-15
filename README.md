@@ -54,7 +54,6 @@ A professional, high-performance, minimalist personal blogging platform built us
 1. **Clone the Repository**
    ```bash
    git clone <https://github.com/geetikavasistha-01/Blog<img width="1680" height="931" alt="Screenshot 2026-06-16 at 1 00 30 AM" src="https://github.com/user-attachments/assets/02613ae9-b659-435d-bbf0-9483b5d3f37b" />
-<img width="1680" height="935" alt="Screenshot 2026-06-16 at 12 59 53 AM" src="https://github.com/user-attachments/assets/06311413-bb99-4494-bd45-9df8a1b509f1" />
 >
    cd Blog
    ```
