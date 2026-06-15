@@ -33,7 +33,9 @@
   <script>
     (function() {
       const saved = localStorage.getItem('gk-theme');
-      if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      if (saved === 'light' || saved === null) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
     })();
   </script>
   <script src="{{ url_for('static', path='script.js') }}?v=1.7" defer></script>
