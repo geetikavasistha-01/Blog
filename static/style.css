@@ -1063,39 +1063,31 @@ footer {
 
 .footer-graphic {
   width: 100%;
+  height: 140px;
   overflow: hidden;
   background-color: var(--bg);
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: -5px;
+  margin-bottom: -1px;
 }
 
 .footer-flames-svg {
   width: 100%;
-  height: auto;
-  max-height: 200px;
+  height: 100%;
   display: block;
 }
 
 .footer-body {
-  padding: 4rem 0 2rem;
+  padding: 5rem 0 3rem;
   background-color: var(--bg-footer-graphic);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 3rem;
-  margin-bottom: 4rem;
-}
-
-@media (max-width: 768px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    text-align: center;
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
 }
 
 .footer-col h4 {
@@ -1111,118 +1103,154 @@ footer {
 .footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .footer-nav a {
   color: var(--bg-footer-graphic-stroke);
   font-family: 'DM Sans', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, text-decoration 0.2s;
+  width: fit-content;
 }
 
 .footer-nav a:hover {
-  opacity: 0.8;
+  opacity: 0.9;
   text-decoration: underline;
+  text-decoration-color: #ff6b00;
+  text-underline-offset: 4px;
 }
 
-.footer-chat {
+.footer-connect {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
 }
 
-.footer-chat p {
+.connect-message {
   font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  line-height: 1.4;
   margin-bottom: 1.5rem;
+  color: var(--bg-footer-graphic-stroke);
+}
+
+.connect-actions {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .footer-chat-btn {
   display: inline-block;
   background-color: var(--bg-footer-graphic-stroke);
   color: var(--bg-footer-graphic);
-  padding: 0.8rem 2rem;
+  padding: 0.8rem 2.2rem;
   font-family: 'DM Mono', monospace;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-decoration: none;
   border-radius: 50px !important;
-  font-weight: 500;
-  transition: opacity 0.2s, transform 0.2s;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
 .footer-chat-btn:hover {
-  opacity: 0.95;
+  background-color: #ff6b00;
+  color: #fff;
   transform: translateY(-2px);
-}
-
-.footer-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-
-@media (max-width: 768px) {
-  .footer-meta {
-    align-items: center;
-    gap: 1.5rem;
-  }
 }
 
 .footer-socials {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .footer-social-icon {
-  display: flex;
+  color: var(--bg-footer-graphic-stroke);
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50% !important;
-  background-color: var(--bg-footer-graphic-stroke);
-  color: var(--bg-footer-graphic);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: bold;
-  font-family: 'DM Mono', monospace;
-  transition: opacity 0.2s;
+}
+
+.footer-social-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 .footer-social-icon:hover {
-  opacity: 0.9;
+  color: #ff6b00 !important;
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 3rem;
 }
 
 .footer-copyright {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
-  opacity: 0.6;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--bg-footer-graphic-stroke);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+.footer-wordmark-wrapper {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
 
 .footer-wordmark {
   font-family: 'DM Sans', sans-serif;
   font-weight: 900;
-  font-size: 8rem;
+  font-size: 11.2vw;
   text-align: center;
   letter-spacing: -0.04em;
   line-height: 0.8;
   color: var(--bg-footer-graphic-stroke);
-  opacity: 0.12;
+  opacity: 0.08;
   user-select: none;
-  margin-top: 2rem;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
-  .footer-wordmark {
-    font-size: 4rem;
+  .footer-graphic {
+    height: 90px;
   }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    text-align: center;
+  }
+  .footer-nav {
+    align-items: center;
+  }
+  .footer-nav a {
+    width: auto;
+  }
+  .footer-connect {
+    align-items: center;
+  }
+  .connect-actions {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  /* footer-wordmark scales fluidly with 11.2vw, no media query override needed */
 }
 
 #theme-toggle {
