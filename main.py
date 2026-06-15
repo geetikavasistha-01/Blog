@@ -1149,6 +1149,28 @@ async def api_subscribe(data: SubscribeRequest, background_tasks: BackgroundTask
         content={"success": True, "message": "Thanks for subscribing!"}
     )
 
+class ChatRequest(BaseModel):
+    email: str
+
+@app.post("/api/chat")
+async def api_chat(data: ChatRequest, background_tasks: BackgroundTasks):
+    import re
+    from email_utils import send_chat_request_emails
+    
+    email = data.email.strip().lower()
+    email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    if not re.match(email_regex, email):
+        return JSONResponse(
+            content={"success": False, "message": "Please enter a valid email address."},
+            status_code=400
+        )
+        
+    background_tasks.add_task(send_chat_request_emails, email)
+    
+    return JSONResponse(
+        content={"success": True, "message": "Thanks! I'll get back to you soon."}
+    )
+
 class ClickTrackRequest(BaseModel):
     target: str
     source_path: str

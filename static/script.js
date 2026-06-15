@@ -515,6 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediumEditor();
   initChangingWord();
   initNewsletter();
+  initChatForm();
   initClickTracking();
 
   // Set correct button label on page load
@@ -604,6 +605,56 @@ function initNewsletter() {
       }
     } catch (err) {
       console.error("Subscription error:", err);
+      alert("An error occurred. Please try again.");
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+function initChatForm() {
+  const form = document.getElementById("chat-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const emailInput = document.getElementById("chat-email");
+    const email = emailInput.value.trim();
+    const submitBtn = form.querySelector("button[type='submit']");
+    const originalText = submitBtn.textContent;
+
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        emailInput.value = "";
+        submitBtn.textContent = data.message || "Sent ✓";
+        submitBtn.style.backgroundColor = "#7ec87e";
+        submitBtn.style.color = "#000";
+        setTimeout(() => {
+          submitBtn.textContent = originalText;
+          submitBtn.style.backgroundColor = "";
+          submitBtn.style.color = "";
+          submitBtn.disabled = false;
+        }, 3000);
+      } else {
+        alert(data.message || "Failed to send request. Please try again.");
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      console.error("Chat form error:", err);
       alert("An error occurred. Please try again.");
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;

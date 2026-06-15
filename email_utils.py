@@ -181,3 +181,66 @@ To unsubscribe, reply directly to this email.
     except Exception as e:
         logger.error(f"Failed to send welcome email to {email}: {e}")
 
+def send_chat_request_emails(visitor_email: str):
+    smtp_host = os.getenv("SMTP_HOST")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_password = os.getenv("SMTP_PASSWORD")
+    smtp_from = os.getenv("SMTP_FROM_EMAIL")
+    smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    admin_email = os.getenv("ADMIN_EMAIL", "geetikavasistha13@gmail.com")
+
+    if not all([smtp_host, smtp_port, smtp_user, smtp_password, smtp_from]):
+        logger.warning("SMTP configuration is incomplete. Skipping chat request emails.")
+        return
+
+    try:
+        smtp_port = int(smtp_port)
+    except ValueError:
+        logger.error(f"Invalid SMTP_PORT: {smtp_port}")
+        return
+
+    try:
+        if smtp_use_tls:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+
+        if smtp_user and smtp_password:
+            server.login(smtp_user, smtp_password)
+
+        # 1. Email to Admin
+        msg_admin = MIMEMultipart("alternative")
+        msg_admin["Subject"] = "New Chat/Collaboration Request!"
+        msg_admin["From"] = smtp_from
+        msg_admin["To"] = admin_email
+
+        text_admin = f"Hello!\n\nYou have received a new chat/collaboration request from: {visitor_email}\n"
+        html_admin = f"<html><body><h3>New Chat Request</h3><p>You have received a new chat/collaboration request from: <strong>{visitor_email}</strong></p></body></html>"
+        msg_admin.attach(MIMEText(text_admin, "plain"))
+        msg_admin.attach(MIMEText(html_admin, "html"))
+
+        server.sendmail(smtp_from, [admin_email], msg_admin.as_string())
+        logger.info(f"Chat request admin notification sent successfully for {visitor_email}")
+
+        # 2. Email to Visitor
+        msg_visitor = MIMEMultipart("alternative")
+        msg_visitor["Subject"] = "Thanks for reaching out! Let's chat soon."
+        msg_visitor["From"] = smtp_from
+        msg_visitor["To"] = visitor_email
+
+        text_visitor = f"Hi!\n\nThanks for reaching out. I've received your request to chat or collaborate and will get back to you soon!\n\nBest,\nGeeky Kunoichi"
+        html_visitor = f"<html><body><h3>Hi!</h3><p>Thanks for reaching out. I've received your request to chat or collaborate and will get back to you soon!</p><p>Best,<br><strong>Geeky Kunoichi</strong></p></body></html>"
+        msg_visitor.attach(MIMEText(text_visitor, "plain"))
+        msg_visitor.attach(MIMEText(html_visitor, "html"))
+
+        server.sendmail(smtp_from, [visitor_email], msg_visitor.as_string())
+        logger.info(f"Chat request confirmation sent successfully to {visitor_email}")
+
+        server.quit()
+    except Exception as e:
+        logger.error(f"Failed to send chat request emails: {e}")
+

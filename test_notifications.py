@@ -124,5 +124,31 @@ def test_subscribe_sends_welcome_email(mock_smtp_class):
     mock_smtp_instance.login.assert_called_once_with("user@test.com", "pass")
     mock_smtp_instance.sendmail.assert_called_once()
 
+@patch("email_utils.smtplib.SMTP")
+def test_chat_sends_emails(mock_smtp_class):
+    mock_smtp_instance = MagicMock()
+    mock_smtp_class.return_value = mock_smtp_instance
+
+    # Set env vars
+    os.environ["SMTP_HOST"] = "smtp.test.com"
+    os.environ["SMTP_PORT"] = "587"
+    os.environ["SMTP_USER"] = "user@test.com"
+    os.environ["SMTP_PASSWORD"] = "pass"
+    os.environ["SMTP_FROM_EMAIL"] = "from@test.com"
+    os.environ["SMTP_USE_TLS"] = "true"
+    os.environ["ADMIN_EMAIL"] = "admin@test.com"
+
+    # Call api_chat
+    response = client.post("/api/chat", json={"email": "visitor@test.com"})
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["message"] == "Thanks! I'll get back to you soon."
+
+    # Verify SMTP was called
+    mock_smtp_class.assert_called_once_with("smtp.test.com", 587, timeout=15)
+    mock_smtp_instance.login.assert_called_once_with("user@test.com", "pass")
+    assert mock_smtp_instance.sendmail.call_count == 2
+
 def teardown_module():
     engine.dispose()
+
