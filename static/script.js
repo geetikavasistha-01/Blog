@@ -513,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCopyCodeButtons();
   initMediumEditor();
   initChangingWord();
-  initStatsCountUp();
   initNewsletter();
   initClickTracking();
 
@@ -636,37 +635,7 @@ function initChangingWord() {
   }, 1000);
 }
 
-// ─── Stats Count Up Animation ────────────────────────────────────────────────
-function initStatsCountUp() {
-  const elements = document.querySelectorAll('.stat-number[data-target]');
-  elements.forEach(el => {
-    const target = parseInt(el.getAttribute('data-target'), 10);
-    if (isNaN(target)) return;
-    
-    // Duration: 1.2s (1200ms)
-    const duration = 1200;
-    const startTime = performance.now();
-    
-    function updateCount(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      // Easing function: easeOutQuad
-      const ease = progress * (2 - progress);
-      const currentVal = Math.floor(ease * target);
-      
-      el.textContent = currentVal;
-      
-      if (progress < 1) {
-        requestAnimationFrame(updateCount);
-      } else {
-        el.textContent = target;
-      }
-    }
-    
-    requestAnimationFrame(updateCount);
-  });
-}
+
 
 // ─── Medium-Style Editor ─────────────────────────────────────────────────────
 function initMediumEditor() {
