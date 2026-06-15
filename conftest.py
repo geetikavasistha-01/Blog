@@ -1,6 +1,6 @@
 import os
 import pytest
-from database import engine
+from test_config import engine
 
 @pytest.fixture(scope="session", autouse=True)
 def cleanup_test_db():
