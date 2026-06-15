@@ -515,8 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediumEditor();
   initChangingWord();
   initNewsletter();
-  initChatForm();
   initClickTracking();
+  initMailtoFallback();
 
   // Set correct button label on page load
   const btn = document.getElementById('theme-toggle');
@@ -545,6 +545,40 @@ function initClickTracking() {
           keepalive: true
         }).catch(() => {});
       }
+    }
+  });
+}
+
+function initMailtoFallback() {
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('.footer-chat-btn');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('mailto:')) {
+      e.preventDefault();
+      
+      let opened = false;
+      const onBlur = () => {
+        opened = true;
+      };
+      
+      window.addEventListener('blur', onBlur);
+      
+      // Try to open mailto
+      window.location.href = href;
+      
+      setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        if (!opened) {
+          // Fallback to Gmail Web Compose in a new tab
+          const email = "cheekykunoichi13@gmail.com";
+          const subject = encodeURIComponent("Let's Chat!");
+          const body = encodeURIComponent("Hi! I'd love to chat about collaborating.");
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+          window.open(gmailUrl, '_blank');
+        }
+      }, 1000);
     }
   });
 }
@@ -612,55 +646,6 @@ function initNewsletter() {
   });
 }
 
-function initChatForm() {
-  const form = document.getElementById("chat-form");
-  if (!form) return;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const emailInput = document.getElementById("chat-email");
-    const email = emailInput.value.trim();
-    const submitBtn = form.querySelector("button[type='submit']");
-    const originalText = submitBtn.textContent;
-
-    try {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Sending...";
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        emailInput.value = "";
-        submitBtn.textContent = data.message || "Sent ✓";
-        submitBtn.style.backgroundColor = "#7ec87e";
-        submitBtn.style.color = "#000";
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-          submitBtn.style.backgroundColor = "";
-          submitBtn.style.color = "";
-          submitBtn.disabled = false;
-        }, 3000);
-      } else {
-        alert(data.message || "Failed to send request. Please try again.");
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-      }
-    } catch (err) {
-      console.error("Chat form error:", err);
-      alert("An error occurred. Please try again.");
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
-    }
-  });
-}
 
 // ─── Changing Word Animation ──────────────────────────────────────────────────
 function initChangingWord() {
