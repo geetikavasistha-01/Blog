@@ -1,4 +1,10 @@
 # GeekyKunoichi Blog Platform
+Blog Page
+<img width="1680" height="935" alt="Screenshot 2026-06-16 at 12 59 53 AM" src="https://github.com/user-attachments/assets/06311413-bb99-4494-bd45-9df8a1b509f1" />
+About Section
+<img width="1680" height="930" alt="Screenshot 2026-06-16 at 1 01 29 AM" src="https://github.com/user-attachments/assets/58bdf8d9-e6d9-4732-8c66-2094794e8d79" />
+Footer
+<img width="1680" height="931" alt="Screenshot 2026-06-16 at 1 03 08 AM" src="https://github.com/user-attachments/assets/2cd88ef9-be22-4f69-85c2-a540228d4771" />
 
 A professional, high-performance, minimalist personal blogging platform built using FastAPI, SQLite, SQLAlchemy, Jinja2, and custom semantic CSS. The platform includes embedded analytics, an asynchronous newsletter subscription and notification system, and an administrative control panel.
 
