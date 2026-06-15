@@ -13,7 +13,7 @@ from main import app
 from models import PageView, Post
 
 # Configure a test database session
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_analytics.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_blog.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -142,9 +142,4 @@ def test_click_tracking_api():
 
 # Cleanup test DB after execution
 def teardown_module():
-    import os
-    if os.path.exists("./test_analytics.db"):
-        try:
-            os.remove("./test_analytics.db")
-        except Exception:
-            pass
+    engine.dispose()

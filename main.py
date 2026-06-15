@@ -255,7 +255,8 @@ async def lifespan(app: FastAPI):
     # Seed database
     db = SessionLocal()
     try:
-        seed_database(db)
+        if os.getenv("SEED_DEMO_DATA", "false").lower() == "true":
+            seed_database(db)
     finally:
         db.close()
     yield
