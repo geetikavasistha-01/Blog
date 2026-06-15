@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <section class="about-grid" id="about-grid">
+    <!-- Left Column -->
+    <div class="about-left">
+      <h1>Geetika<span class="period">.</span></h1>
+      <span class="about-left-subtitle">// the geeky kunoichi</span>
+    </div>
+
+    <!-- Right Column (Bio) -->
+    <div class="about-right">
+      <p>
+        I'm a Computer Science & Machine Learning student who spends most days somewhere between writing code, untangling distributed systems, and trying to make sense of data that doesn't want to make sense.
+      </p>
+      <p>
+        My world revolves around data science, high-performance backend systems (Go, Python, Rust — pick your poison), and climate tech — building things that can sense, predict, and respond to a planet that's changing faster than our infrastructure is. Solar forecasting, heat intelligence, smarter grids — the unglamorous, deeply necessary stuff.
+      </p>
+      <p>
+        This blog is where I document all of it: build logs, half-finished architecture diagrams, the bugs that took three days and the fixes that took three minutes, and the occasional spiral into engineering philosophy at 2am.
+      </p>
+      <p>
+        The name Kunoichi — a female shinobi — felt right. Stealth, precision, adaptability, constant refinement. In tech and AI spaces that weren't always built with us in mind, that's the energy I try to bring: quietly competent, always sharpening something.
+      </p>
+
+      <div class="about-links">
+        <a href="https://github.com/geetikavasistha-01" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/geetikavasisthampy" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Focus Topics Section -->
+  <section class="about-topics-section">
+    <h2>What I write about</h2>
+
+    <div class="topics-list">
+      <div class="topic-item">
+        <div class="topic-category">// Systems</div>
+        <div class="topic-desc">
+          Architectural deep-dives on high-load systems, API performance, dockerization, networking, and writing robust
+          backends in Go, Rust, and Python.
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <div class="topic-category">// ML & AI</div>
+        <div class="topic-desc">
+          Exploration of neural architectures, LLM reliability, neural agents, training optimizations, and integrating
+          models into real-world software products.
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <div class="topic-category">// Robotics</div>
+        <div class="topic-desc">
+          Build logs and system designs for autonomous inspection projects, LiDAR navigation, sensor fusion, and
+          low-level firmware integration.
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <div class="topic-category">// Career & Life</div>
+        <div class="topic-desc">
+          Reflections on navigating computer science programs, internship hunts, the philosophy of engineering, and
+          working in intense development environments.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

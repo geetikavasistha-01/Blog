@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block content %}
+<div class="login-container">
+  
+  <h1>Admin Login</h1>
+  
+  <form action="/admin/login" method="POST">
+    {% if error %}
+      <div class="login-error">// {{ error }}</div>
+    {% endif %}
+    
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autofocus>
+    </div>
+    
+    <button type="submit" class="btn-submit">Authenticate</button>
+  </form>
+
+</div>
+{% endblock %}

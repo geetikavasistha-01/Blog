@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block meta_description %}{{ post.excerpt }}{% endblock %}
+
+{% block canonical %}{{ request.url }}{% endblock %}
+
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.excerpt }}{% endblock %}
+{% block og_url %}{{ request.url }}{% endblock %}
+{% block og_image %}{{ og_image }}{% endblock %}
+
+{% block twitter_title %}{{ post.title }}{% endblock %}
+{% block twitter_description %}{{ post.excerpt }}{% endblock %}
+{% block twitter_image %}{{ og_image }}{% endblock %}
+
+{% block content %}
+<div id="reading-progress"></div>
+<div class="post-detail-container">
+  
+  <!-- Back navigation link -->
+  <a href="/" class="back-link">← back to writing</a>
+  
+  <article>
+    <!-- Post Header -->
+    <header class="post-header" style="border: none; position: static; background: transparent; padding: 0;">
+      <div class="post-header-category">// {% if post.tags %}{% for t in post.tags %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{{ post.category }}{% endif %}</div>
+      <h1 class="post-header-title">{{ post.title }}</h1>
+      <div class="post-header-meta">
+        {{ post.created_at.strftime('%B %d, %Y') }}
+        <span class="separator">•</span>
+        {{ post.read_time }} min read
+      </div>
+    </header>
+
+    {% if post.cover_image %}
+    <div class="post-cover" style="margin:2rem 0;overflow:hidden;">
+      <img src="{{ post.cover_image }}" alt="{{ post.title }}"
+           style="width:100%;max-height:420px;object-fit:cover;filter:brightness(0.9);">
+    </div>
+    {% endif %}
+    
+    <hr class="post-divider">
+    
+    <!-- Rendered Markdown Body -->
+    <div class="post-body">
+      {{ post.body_html | safe }}
+    </div>
+  </article>
+
+  <!-- Comments Section (Giscus) -->
+  {% if giscus_repo and giscus_repo_id %}
+  <hr class="post-divider" style="margin-top: 4rem;">
+  <section class="comments-section" style="margin-top: 3rem;">
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 2rem; color: var(--text);">Discussions</h3>
+    <div id="giscus-comments-wrapper">
+      <script>
+        (function() {
+          const script = document.createElement('script');
+          script.src = "https://giscus.app/client.js";
+          script.setAttribute('data-repo', "{{ giscus_repo }}");
+          script.setAttribute('data-repo-id', "{{ giscus_repo_id }}");
+          script.setAttribute('data-category', "{{ giscus_category }}");
+          script.setAttribute('data-category-id', "{{ giscus_category_id }}");
+          script.setAttribute('data-mapping', "pathname");
+          script.setAttribute('data-strict', "0");
+          script.setAttribute('data-reactions-enabled', "1");
+          script.setAttribute('data-emit-metadata', "0");
+          script.setAttribute('data-input-position', "bottom");
+          
+          const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          script.setAttribute('data-theme', isLight ? 'light' : 'transparent_dark');
+          
+          script.setAttribute('data-lang', "en");
+          script.setAttribute('crossorigin', "anonymous");
+          script.async = true;
+          document.getElementById('giscus-comments-wrapper').appendChild(script);
+        })();
+      </script>
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{% if post %}Edit — {{ post.title }}{% else %}New Post{% endif %}{% endblock %}
+{% block content %}
+<div class="medium-editor-layout">
+
+  <!-- LEFT: Writing surface -->
+  <div class="writing-surface">
+
+    <div class="editor-topbar">
+      <a href="/admin" class="editor-back">← dashboard</a>
+      <div class="editor-topbar-right">
+        <label class="toggle-wrap">
+          <span class="toggle-label">Featured</span>
+          <input type="checkbox" name="featured" id="featured" {% if post and post.featured %}checked{% endif %}>
+        </label>
+        <label class="toggle-wrap">
+          <span class="toggle-label">Published</span>
+          <input type="checkbox" name="published" id="published" {% if not post or post.published %}checked{% endif %}>
+        </label>
+        <select name="category" id="category" class="category-select">
+          {% for cat in ['Systems', 'ML & AI', 'Robotics', 'Career', 'Life'] %}
+          <option value="{{ cat }}" {% if post and post.category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+        <button type="button" class="publish-btn" onclick="submitPost()">
+          {% if post %}Update{% else %}Publish{% endif %} →
+        </button>
+      </div>
+    </div>
+
+    <div class="writing-area">
+      <input type="text" id="post-title" class="title-input" placeholder="Title"
+             value="{{ post.title if post else '' }}" autocomplete="off">
+      <input type="text" id="post-excerpt" class="excerpt-input" placeholder="Write a short description..."
+             value="{{ post.excerpt if post else '' }}" autocomplete="off">
+      <input type="text" id="post-tags" class="excerpt-input" placeholder="Tags (comma-separated, e.g., systems, golang)"
+             value="{{ tags_str }}" style="font-family: 'DM Mono', monospace; font-size: 0.82rem;" autocomplete="off">
+
+      <div class="cover-strip" id="cover-strip">
+        {% if post and post.cover_image %}
+        <div class="cover-preview-inline">
+          <img src="{{ post.cover_image }}" alt="cover">
+          <button type="button" class="remove-cover" onclick="removeCover()">✕</button>
+        </div>
+        {% else %}
+        <button type="button" class="add-cover-btn" onclick="document.getElementById('cover-file-input').click()">
+          + Add cover image
+        </button>
+        {% endif %}
+        <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+        <input type="hidden" id="cover-image-value" name="cover_image" value="{{ post.cover_image if post else '' }}">
+      </div>
+
+      <div class="writing-divider"></div>
+
+      <div id="editor-content" class="content-editable"
+           contenteditable="true" data-placeholder="Tell your story..."></div>
+      <textarea id="body-hidden" name="body" style="display:none">{{ post.body if post else '' }}</textarea>
+    </div>
+
+    <!-- Floating toolbar -->
+    <div id="floating-toolbar" class="floating-toolbar" style="display:none;">
+      <button type="button" class="fmt-btn" data-cmd="bold"><strong>B</strong></button>
+      <button type="button" class="fmt-btn" data-cmd="italic"><em>I</em></button>
+      <div class="toolbar-divider"></div>
+      <button type="button" class="fmt-btn" data-cmd="h2">H2</button>
+      <button type="button" class="fmt-btn" data-cmd="h3">H3</button>
+      <div class="toolbar-divider"></div>
+      <button type="button" class="fmt-btn" data-cmd="blockquote">"</button>
+      <button type="button" class="fmt-btn" data-cmd="code">&lt;/&gt;</button>
+      <div class="toolbar-divider"></div>
+      <button type="button" class="fmt-btn" data-cmd="link">🔗</button>
+    </div>
+
+    <!-- Link popover -->
+    <div id="link-popover" class="link-popover" style="display:none;">
+      <input type="text" id="link-url-input" placeholder="https://" class="link-url-input">
+      <button type="button" onclick="applyLink()" class="link-apply-btn">Apply →</button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Live preview -->
+  <div class="preview-panel">
+    <div class="preview-header">
+      <span class="preview-label">// live preview</span>
+      <span class="preview-word-count" id="word-count">0 words</span>
+    </div>
+    <div class="preview-body" id="preview-body">
+      <p class="preview-empty">Nothing to preview yet...</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

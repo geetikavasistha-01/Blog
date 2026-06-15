@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary Meta -->
+  <title>{% block title %}GeekyKunoichi{% endblock %} — GeekyKunoichi</title>
+  <meta name="description" content="{% block meta_description %}Technical deep-dives, personal essays, and everything in between. Written by Geetika — CS student, ML engineer, occasional philosopher.{% endblock %}">
+  <meta name="author" content="Geetika Vasistha">
+  <link rel="canonical" href="{% block canonical %}https://geekykunoichi.com{% endblock %}">
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp previews) -->
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}GeekyKunoichi{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Technical deep-dives, personal essays, and everything in between.{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}https://geekykunoichi.com{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}https://geekykunoichi.com/static/og-default.png{% endblock %}">
+  <meta property="og:site_name" content="GeekyKunoichi">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}GeekyKunoichi{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Technical deep-dives, personal essays, and everything in between.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}https://geekykunoichi.com/static/og-default.png{% endblock %}">
+
+  <!-- RSS Feed Discovery -->
+  <link rel="alternate" type="application/rss+xml" title="GeekyKunoichi RSS Feed" href="/feed.xml">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}?v=1.7">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('gk-theme');
+      if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
+  <script src="{{ url_for('static', path='script.js') }}?v=1.7" defer></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sticky Header & Navbar -->
+  <header>
+    <div class="container">
+      <nav class="navbar" id="navbar">
+        <a href="/" class="nav-logo" id="nav-logo">
+          <img src="{{ url_for('static', path='logo.png') }}?v=1.5" alt="Cheeky Kunoichi Logo">
+        </a>
+        
+        <ul class="nav-links">
+          <li><a href="/" class="{% if active_tab == 'writing' %}active{% endif %}">Writing</a></li>
+          <li><a href="/about" class="{% if active_tab == 'about' %}active{% endif %}">About</a></li>
+          <li><a href="/archive" class="{% if active_tab == 'archive' %}active{% endif %}">Archive</a></li>
+          <li>
+            <a href="/search" class="nav-search {% if active_tab == 'search' %}active{% endif %}" aria-label="Search" style="display: inline-flex; align-items: center; justify-content: center; height: 100%;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </a>
+          </li>
+        </ul>
+        
+        <button id="theme-toggle" onclick="triggerThemeToggle()" aria-label="Toggle theme">
+          ☀ Light Mode
+        </button>
+        {% if request.cookies.get("geeky_session") == "authenticated" %}
+        <a href="/admin/post/new" class="btn-new-post" id="new-post-btn">New Post +</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Editorial Footer -->
+  <footer>
+    <div class="container">
+      
+      <!-- Newsletter signup section -->
+      <div class="footer-newsletter" style="margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+        <div style="max-width: 420px;">
+          <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--text); text-transform: none; letter-spacing: normal;">Subscribe to the newsletter</h4>
+          <p style="font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin: 0; text-transform: none; letter-spacing: normal;">Get occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
+        </div>
+        <form id="newsletter-form" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; min-width: 280px;">
+          <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required 
+                 style="flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.6rem 1rem; border: 1px solid var(--border); background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.25s;">
+          <button type="submit" class="page-btn" style="padding: 0.6rem 1.2rem; font-size: 0.72rem; flex-shrink: 0; background: var(--accent); color: var(--bg); border: none; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: opacity 0.2s;">Subscribe</button>
+        </form>
+      </div>
+
+      <div class="footer-content">
+        <div class="footer-left">
+          <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text);">Geeky<span style="font-style: italic; color: var(--accent);">Kunoichi</span></span>
+        </div>
+        <div class="footer-center">
+          // writing since 2024
+        </div>
+        <div class="footer-right">
+          made with obsession, not templates
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="kunoichi-overlay">
+
+    <!-- Female kunoichi SVG — long ponytail, fitted suit, throwing arm extended -->
+    <svg id="k-figure" viewBox="0 0 72 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- head / face -->
+      <path d="M36 4 C28 4 22 10 22 18 C22 26 28 32 36 32 C44 32 50 26 50 18 C50 10 44 4 36 4Z" fill="#d4a882"/>
+      <!-- long ponytail flowing back -->
+      <path d="M44 8 C46 6 52 5 56 10 C60 16 58 26 54 30 C52 28 50 24 50 18 C50 13 47 9 44 8Z" fill="#1a1a1a"/>
+      <path d="M50 16 C54 14 60 15 62 20 C64 26 60 36 56 40 C53 36 52 28 52 22Z" fill="#111"/>
+      <path d="M56 38 C58 42 57 50 54 54" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <!-- ninja mask -->
+      <rect x="20" y="8" width="28" height="18" rx="2" fill="#0d0d0d" opacity="0.9"/>
+      <rect x="24" y="15" width="20" height="3" rx="1" fill="#c8b89a" opacity="0.35"/>
+      <!-- body / fitted suit -->
+      <path d="M22 30 C18 32 14 38 13 48 C12 55 14 64 16 70 L28 68 C26 62 25 54 26 48 C27 40 30 36 36 34 C42 36 45 40 46 48 C47 54 46 62 44 68 L56 70 C58 64 60 55 59 48 C58 38 54 32 50 30 C46 28 40 26 36 26 C32 26 26 28 22 30Z" fill="#1a1a1a"/>
+      <!-- accent sash -->
+      <path d="M36 34 C32 35 29 37 27 42 L28 43 C30 39 33 37 36 36 C39 37 42 39 44 43 L45 42 C43 37 40 35 36 34Z" fill="#c8b89a" opacity="0.2"/>
+      <!-- legs -->
+      <path d="M28 68 C27 76 27 84 28 92 L36 92 L36 68Z" fill="#111"/>
+      <path d="M44 68 C45 76 45 84 44 92 L36 92 L36 68Z" fill="#0f0f0f"/>
+      <!-- boots -->
+      <path d="M28 92 C26 96 24 100 24 106 L32 106 C32 102 33 96 36 92Z" fill="#111"/>
+      <path d="M44 92 C46 96 48 100 48 106 L40 106 C40 102 39 96 36 92Z" fill="#0f0f0f"/>
+      <ellipse cx="26" cy="106" rx="6" ry="3" fill="#0d0d0d"/>
+      <ellipse cx="46" cy="106" rx="6" ry="3" fill="#0c0c0c"/>
+      <!-- throwing arm extended right -->
+      <line x1="56" y1="44" x2="72" y2="36" stroke="#c8b89a" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+
+    <!-- Shuriken (8-pointed star) -->
+    <svg id="k-shuriken" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,0 12.5,7.5 20,10 12.5,12.5 10,20 7.5,12.5 0,10 7.5,7.5" fill="#c8b89a"/>
+      <circle cx="10" cy="10" r="2.5" fill="#0e0e0e"/>
+      <line x1="10" y1="4" x2="10" y2="16" stroke="#0e0e0e" stroke-width="0.8"/>
+      <line x1="4" y1="10" x2="16" y2="10" stroke="#0e0e0e" stroke-width="0.8"/>
+    </svg>
+
+    <!-- Burst circle — JS animates this -->
+    <div id="k-burst"></div>
+
+  </div>
+
+  {% if request.cookies.get("geeky_session") == "authenticated" %}
+  <a href="/admin/post/new" class="floating-write-btn" 
+     aria-label="Write new post">✎</a>
+  {% endif %}
+
+</body>
+</html>
