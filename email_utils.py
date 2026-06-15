@@ -109,3 +109,71 @@ To unsubscribe, reply directly to this email.
         logger.error(f"Error in SMTP email delivery thread: {e}")
     finally:
         db.close()
+
+def send_welcome_email(email: str):
+    smtp_host = os.getenv("SMTP_HOST")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_password = os.getenv("SMTP_PASSWORD")
+    smtp_from = os.getenv("SMTP_FROM_EMAIL")
+    smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    site_url = os.getenv("SITE_URL", "https://geekykunoichi.com").rstrip("/")
+
+    if not all([smtp_host, smtp_port, smtp_user, smtp_password, smtp_from]):
+        logger.warning("SMTP configuration is incomplete. Skipping welcome email.")
+        return
+
+    try:
+        smtp_port = int(smtp_port)
+    except ValueError:
+        logger.error(f"Invalid SMTP_PORT: {smtp_port}")
+        return
+
+    try:
+        if smtp_use_tls:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+
+        if smtp_user and smtp_password:
+            server.login(smtp_user, smtp_password)
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = "Welcome to the GeekyKunoichi Newsletter!"
+        msg["From"] = smtp_from
+        msg["To"] = email
+
+        text_body = f"""Hello!
+
+Thank you for subscribing to the GeekyKunoichi newsletter!
+
+You'll receive occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.
+
+Visit the blog: {site_url}
+
+---
+To unsubscribe, reply directly to this email.
+"""
+        html_body = f"""<html>
+<body>
+  <p>Hello!</p>
+  <p>Thank you for subscribing to the <strong>GeekyKunoichi</strong> newsletter!</p>
+  <p>You'll receive occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
+  <p><a href="{site_url}">Visit the blog &rarr;</a></p>
+  <hr>
+  <p style="font-size: 0.8rem; color: #777;">To unsubscribe, reply directly to this email.</p>
+</body>
+</html>
+"""
+        msg.attach(MIMEText(text_body, "plain"))
+        msg.attach(MIMEText(html_body, "html"))
+
+        server.sendmail(smtp_from, [email], msg.as_string())
+        server.quit()
+        logger.info(f"Welcome email sent successfully to {email}")
+    except Exception as e:
+        logger.error(f"Failed to send welcome email to {email}: {e}")
+

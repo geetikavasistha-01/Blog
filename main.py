@@ -1124,9 +1124,10 @@ class SubscribeRequest(BaseModel):
     email: str
 
 @app.post("/api/subscribe")
-async def api_subscribe(data: SubscribeRequest, db: Session = Depends(get_db)):
+async def api_subscribe(data: SubscribeRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     import re
     from models import EmailSubscriber
+    from email_utils import send_welcome_email
     
     email = data.email.strip().lower()
     email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -1137,14 +1138,12 @@ async def api_subscribe(data: SubscribeRequest, db: Session = Depends(get_db)):
         )
         
     existing = db.query(EmailSubscriber).filter(EmailSubscriber.email == email).first()
-    if existing:
-        return JSONResponse(
-            content={"success": True, "message": "You're already subscribed!"}
-        )
+    if not existing:
+        new_sub = EmailSubscriber(email=email)
+        db.add(new_sub)
+        db.commit()
         
-    new_sub = EmailSubscriber(email=email)
-    db.add(new_sub)
-    db.commit()
+    background_tasks.add_task(send_welcome_email, email)
     
     return JSONResponse(
         content={"success": True, "message": "Thanks for subscribing!"}

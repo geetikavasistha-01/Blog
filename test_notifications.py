@@ -100,5 +100,29 @@ def test_post_publish_triggers_background_task():
         # TestClient runs background tasks synchronously before returning the response
         mock_send.assert_called_once()
 
+@patch("email_utils.smtplib.SMTP")
+def test_subscribe_sends_welcome_email(mock_smtp_class):
+    mock_smtp_instance = MagicMock()
+    mock_smtp_class.return_value = mock_smtp_instance
+
+    # Set env vars
+    os.environ["SMTP_HOST"] = "smtp.test.com"
+    os.environ["SMTP_PORT"] = "587"
+    os.environ["SMTP_USER"] = "user@test.com"
+    os.environ["SMTP_PASSWORD"] = "pass"
+    os.environ["SMTP_FROM_EMAIL"] = "from@test.com"
+    os.environ["SMTP_USE_TLS"] = "true"
+
+    # Call api_subscribe
+    response = client.post("/api/subscribe", json={"email": "new_sub@test.com"})
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["message"] == "Thanks for subscribing!"
+
+    # Verify SMTP was called
+    mock_smtp_class.assert_called_once_with("smtp.test.com", 587, timeout=15)
+    mock_smtp_instance.login.assert_called_once_with("user@test.com", "pass")
+    mock_smtp_instance.sendmail.assert_called_once()
+
 def teardown_module():
     engine.dispose()
