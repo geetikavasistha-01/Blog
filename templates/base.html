@@ -83,30 +83,70 @@
 
   <!-- Editorial Footer -->
   <footer>
-    <div class="container">
-      
-      <!-- Newsletter signup section -->
-      <div class="footer-newsletter" style="margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
-        <div style="max-width: 420px;">
-          <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--text); text-transform: none; letter-spacing: normal;">Subscribe to the newsletter</h4>
-          <p style="font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin: 0; text-transform: none; letter-spacing: normal;">Get occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
+    <div class="footer-newsletter-wrapper">
+      <div class="container">
+        <!-- Newsletter signup section -->
+        <div class="footer-newsletter" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+          <div style="max-width: 420px;">
+            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--text); text-transform: none; letter-spacing: normal;">Subscribe to the newsletter</h4>
+            <p style="font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin: 0; text-transform: none; letter-spacing: normal;">Get occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
+          </div>
+          <form id="newsletter-form" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; min-width: 280px;">
+            <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required 
+                   style="flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.6rem 1rem; border: 1px solid var(--border); background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.25s;">
+            <button type="submit" class="page-btn" style="padding: 0.6rem 1.2rem; font-size: 0.72rem; flex-shrink: 0; background: var(--accent); color: var(--bg); border: none; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: opacity 0.2s;">Subscribe</button>
+          </form>
         </div>
-        <form id="newsletter-form" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; min-width: 280px;">
-          <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required 
-                 style="flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.6rem 1rem; border: 1px solid var(--border); background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.25s;">
-          <button type="submit" class="page-btn" style="padding: 0.6rem 1.2rem; font-size: 0.72rem; flex-shrink: 0; background: var(--accent); color: var(--bg); border: none; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: opacity 0.2s;">Subscribe</button>
-        </form>
       </div>
+    </div>
 
-      <div class="footer-content">
-        <div class="footer-left">
-          <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text);">Geeky<span style="font-style: italic; color: var(--accent);">Kunoichi</span></span>
+    <!-- Flames Graphic with peeking Kunoichi eyes -->
+    <div class="footer-graphic">
+      <svg viewBox="0 0 1200 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="footer-flames-svg">
+        <path d="M0 220 L1200 220 L1200 100 C1100 80 1080 30 1020 10 C960 -10 930 40 870 50 C810 60 780 20 720 35 C660 50 630 10 570 0 C510 -10 480 30 420 40 C360 50 330 15 270 30 C210 45 180 5 120 15 C60 25 30 80 0 100 Z" fill="var(--bg-footer-graphic)" />
+        <g transform="translate(540, 95)">
+          <path d="M20 50 C20 25 100 25 100 50" stroke="var(--bg-footer-graphic-stroke)" stroke-width="5" fill="none" />
+          <path d="M35 48 C42 45 47 49 47 49" stroke="var(--bg-footer-graphic-stroke)" stroke-width="3.5" stroke-linecap="round" />
+          <path d="M85 48 C78 45 73 49 73 49" stroke="var(--bg-footer-graphic-stroke)" stroke-width="3.5" stroke-linecap="round" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Main Footer Body -->
+    <div class="footer-body">
+      <div class="container">
+        <div class="footer-grid">
+          <!-- Column 1: Navigation -->
+          <div class="footer-col footer-nav">
+            <h4>Navigation</h4>
+            <a href="/">Writing</a>
+            <a href="/about">About</a>
+            <a href="/archive">Archive</a>
+            <a href="/search">Search</a>
+          </div>
+
+          <!-- Column 2: Say Hi! -->
+          <div class="footer-col footer-chat">
+            <h4>Say Hi!</h4>
+            <p>Interested in collaborating or just chatting?</p>
+            <a href="mailto:geetikavasistha13@gmail.com" class="footer-chat-btn">Let's Chat!</a>
+          </div>
+
+          <!-- Column 3: Copyright & Socials -->
+          <div class="footer-col footer-meta">
+            <div class="footer-socials">
+              <a href="https://github.com/geetikavasistha-01" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="GitHub">GH</a>
+              <a href="https://hashnode.com/@ai-for-all" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Hashnode">HN</a>
+              <a href="https://medium.com/@geetikavasistha13" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Medium">MD</a>
+              <a href="https://discord.gg/3ptJBmFp" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Discord">DC</a>
+            </div>
+            <p class="footer-copyright">© 2026 Geeky Kunoichi</p>
+          </div>
         </div>
-        <div class="footer-center">
-          // writing since 2024
-        </div>
-        <div class="footer-right">
-          made with obsession, not templates
+
+        <!-- Huge Wordmark at bottom -->
+        <div class="footer-wordmark">
+          Geeky Kunoichi
         </div>
       </div>
     </div>
