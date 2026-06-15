@@ -1,57 +1,138 @@
-# GeekyKunoichi Blog
+# GeekyKunoichi Blog Platform
 
-A dark, minimalistic, editorial personal blog built using FastAPI, SQLite, SQLAlchemy, Jinja2, and custom vanilla CSS.
+A professional, high-performance, minimalist personal blogging platform built using FastAPI, SQLite, SQLAlchemy, Jinja2, and custom semantic CSS. The platform includes embedded analytics, an asynchronous newsletter subscription and notification system, and an administrative control panel.
 
-## Setup & Installation
+## Features
 
-1. **Clone the repository**:
+* **Content Management System**: Write articles in Markdown with automatic HTML compilation, read-time calculations, automated slug generation, tag management, and image upload capabilities.
+* **Visitor Analytics**: Track page views, post-specific views, user agents, referrers, and visitor engagement metrics. All metrics utilize SHA-256 hashed client IP addresses and user agents to preserve user privacy.
+* **Newsletter and Notifications**: Subscribe readers and notify them asynchronously when new articles are published, using background worker tasks and robust SMTP transport.
+* **Modern Editorial Design**: A responsive, dark-editorial user interface designed using custom typography, fluid layouts, SVG icons, and edge-to-edge graphics.
+* **Security Controls**: Implements secure session cookies, bcrypt-hashed passwords for administrative accounts, and request rate limiting on authentication endpoints to prevent brute-force attacks.
+
+## Tech Stack
+
+* **Web Framework**: FastAPI (Asynchronous Server Gateway Interface)
+* **Database & ORM**: SQLite with SQLAlchemy ORM
+* **Migrations**: Alembic
+* **Templating Engine**: Jinja2
+* **Markdown Parser**: markdown2
+* **Styling**: Semantic HTML5 and Vanilla CSS3
+* **Testing**: Pytest with HTTPX and AnyIO
+
+---
+
+## Directory Structure
+
+* `main.py`: Main application entry point containing FastAPI endpoints, middleware, custom rate-limiters, and backend routes.
+* `models.py`: Declarative SQLAlchemy models representing database entities (Posts, Tags, Subscribers, PageViews).
+* `database.py`: Database connection setup, session management, and base declarative class.
+* `email_utils.py`: Email validation, SMTP client abstraction, and HTML email template formatting.
+* `templates/`: Jinja2 templates (base layout, home page, blog posts, about page).
+* `static/`: Static assets including CSS, JavaScript, and favicon images.
+* `alembic/`: Database schema version history and migration scripts.
+* `tests/`: Automated unit and integration test suites.
+
+---
+
+## Installation & Local Development
+
+### Prerequisites
+
+* Python 3.10 or higher
+* pip (Python package installer)
+* SQLite3
+
+### Setup Steps
+
+1. **Clone the Repository**
    ```bash
    git clone <repository_url>
    cd Blog
    ```
 
-2. **Create a virtual environment**:
+2. **Create and Activate a Virtual Environment**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
 
-3. **Install dependencies**:
+3. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Setup environment configuration**:
-   Copy `.env.example` to `.env`:
+4. **Environment Configuration**
+   Copy the example environment file:
    ```bash
    cp .env.example .env
    ```
+   Open the `.env` file and configure the settings (e.g., database file path, SMTP settings, etc.).
 
-5. **Generate an admin password hash**:
-   Use `bcrypt` to generate a secure hash for your desired password:
-   ```python
-   import bcrypt
-   print(bcrypt.hashpw(b"your_password_here", bcrypt.gensalt()).decode())
+5. **Generate Security Keys & Credentials**
+   Generate a secure random session secret key:
+   ```bash
+   python3 -c "import secrets; print(secrets.token_hex(32))"
    ```
-   Paste the generated hash into your `.env` file as `ADMIN_PASSWORD_HASH`.
+   Paste the generated string into the `.env` file as `SECRET_KEY`.
 
-6. **Generate a secret key**:
-   Use Python's `secrets` module to generate a random session secret key:
-   ```python
-   import secrets
-   print(secrets.token_hex(32))
+   Generate a bcrypt-hashed password for the administrative account:
+   ```bash
+   python3 -c "import bcrypt; print(bcrypt.hashpw(b'your_secure_password', bcrypt.gensalt()).decode())"
    ```
-   Paste the output into your `.env` file as `SECRET_KEY`.
+   Paste the generated hash into the `.env` file as `ADMIN_PASSWORD_HASH`.
 
-7. **Run the development server**:
+6. **Initialize the Database**
+   Run the Alembic migrations to construct the database schema:
+   ```bash
+   alembic upgrade head
+   ```
+
+7. **Run the Development Server**
    ```bash
    python3 -m uvicorn main:app --reload
    ```
+   The local application will be accessible at `http://127.0.0.1:8000`.
 
 ---
 
-## ⚠️ Security Notes
+## Database Migrations
 
-* **Configuration**: Never check your `.env` file or the local database file `blog.db` into public version control. They are automatically ignored in `.gitignore`.
-* **Cookie Flags**: In production environments, edit `main.py` cookie configuration to set `secure=True` (which requires HTTPS) to prevent transport interception.
-* **Authentication Rate Limits**: The admin login route is rate-limited to a maximum of 5 attempts per minute per IP address. Exceeding this limit returns an HTTP 429 Too Many Requests response.
+This project uses Alembic to manage database schema updates.
+
+* **Apply Pending Migrations**:
+  ```bash
+  alembic upgrade head
+  ```
+* **Revert Last Migration**:
+  ```bash
+  alembic downgrade -1
+  ```
+* **Generate a New Migration Script**:
+  ```bash
+  alembic revision --autogenerate -m "description_of_changes"
+  ```
+
+---
+
+## Running the Test Suite
+
+The application includes unit and integration tests covering security, endpoints, analytics, and notification behaviors.
+
+To run all tests:
+```bash
+pytest
+```
+
+To run a specific test file:
+```bash
+pytest test_endpoints.py
+```
+
+---
+
+## Security Hardening for Production
+
+* **HTTPS Enforcement**: Ensure the site is served over SSL/TLS. In `main.py`, configure session and state cookies with the `secure=True` flag.
+* **Environment Separation**: Ensure the SQLite database file (`blog.db`) and credentials file (`.env`) are kept out of public version control (they are ignored by default in `.gitignore`).
+* **SMTP Credentials**: Set strong, secure app-specific passwords for SMTP configurations in production to prevent spam or unauthorized email sending.
