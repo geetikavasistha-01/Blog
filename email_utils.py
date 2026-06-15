@@ -146,25 +146,29 @@ def send_welcome_email(email: str):
         msg["From"] = smtp_from
         msg["To"] = email
 
-        text_body = f"""Hello!
+        text_body = f"""Welcome to GeekyKunoichi.
 
-Thank you for subscribing to the GeekyKunoichi newsletter!
+A place for machine learning, systems engineering, climate tech, robotics, and the occasional reflection on life, technology, and building things that matter.
 
-You'll receive occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.
+Expect build logs, technical deep-dives, lessons learned, and ideas worth exploring.
 
-Visit the blog: {site_url}
+No noise. Just curiosity, engineering, and continuous learning. Thanks for stopping by. Glad you're here.
 
 ---
+Visit the blog: {site_url}
 To unsubscribe, reply directly to this email.
 """
         html_body = f"""<html>
-<body>
-  <p>Hello!</p>
-  <p>Thank you for subscribing to the <strong>GeekyKunoichi</strong> newsletter!</p>
-  <p>You'll receive occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
-  <p><a href="{site_url}">Visit the blog &rarr;</a></p>
-  <hr>
-  <p style="font-size: 0.8rem; color: #777;">To unsubscribe, reply directly to this email.</p>
+<body style="font-family: 'DM Sans', sans-serif; color: #0c0804; line-height: 1.6; background-color: #f2ebd9; padding: 2rem;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #f2ebd9; border: 1px solid #bcae97; padding: 2.5rem;">
+    <h2 style="font-family: 'Playfair Display', serif; font-weight: normal; margin-top: 0; color: #0c0804;">Welcome to GeekyKunoichi.</h2>
+    <p>A place for machine learning, systems engineering, climate tech, robotics, and the occasional reflection on life, technology, and building things that matter.</p>
+    <p>Expect build logs, technical deep-dives, lessons learned, and ideas worth exploring.</p>
+    <p>No noise. Just curiosity, engineering, and continuous learning. Thanks for stopping by. Glad you're here.</p>
+    <p style="margin-top: 2rem;"><a href="{site_url}" style="background-color: #50300e; color: #f2ebd9; padding: 0.6rem 1.2rem; text-decoration: none; font-family: 'DM Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">Visit the blog &rarr;</a></p>
+    <hr style="border: none; border-top: 1px solid #bcae97; margin: 2rem 0;">
+    <p style="font-size: 0.8rem; color: #777; font-family: 'DM Mono', monospace;">To unsubscribe, reply directly to this email.</p>
+  </div>
 </body>
 </html>
 """
