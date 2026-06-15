@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <span class="hero-label">// A mind in motion</span>
+      <h1>Thoughts from a <em class="changing-word">Geeky</em> Kunoichi</h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-subtitle">
+        A CS / Data Science grad documenting experiments, projects, and ideas at the intersection of machine learning, robotics, and software systems. A digital notebook for building, learning, and sharing what works—and what doesn't.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar" id="filter-bar">
+    <span class="filter-label">Filter</span>
+    <div class="filter-tags">
+      <button class="tag-btn {% if not selected_tag or selected_tag == 'All' %}active{% endif %}" data-tag="All">All</button>
+      {% for t in tags %}
+        <button class="tag-btn {% if selected_tag == t.slug %}active{% endif %}" data-tag="{{ t.slug }}">{{ t.name }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Posts Grid -->
+  <div class="posts-grid" id="posts-grid">
+    {% if posts %}
+      {% set ns = namespace(on_left=true) %}
+      {% for post in posts %}
+        <!-- Check if it is the featured post and we are showing 'All' posts -->
+        {% if post.featured and (not selected_tag or selected_tag == 'All') %}
+          <a href="/post/{{ post.slug }}" class="post-card featured" id="post-{{ post.id }}">
+            {% if post.cover_image %}
+            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;max-height:160px;">
+              <img src="{{ post.cover_image }}" alt="{{ post.title }}"
+                   style="width:100%;height:160px;object-fit:cover;filter:brightness(0.85);">
+            </div>
+            {% endif %}
+            <div class="post-card-content">
+              <span class="featured-badge">Featured</span>
+              <div class="featured-layout">
+                <div>
+                  <span class="post-card-category">// {% if post.tags %}{% for t in post.tags %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{{ post.category }}{% endif %}</span>
+                  <h2 class="post-card-title">{{ post.title }}</h2>
+                </div>
+                <div>
+                  <p class="post-card-excerpt">{{ post.excerpt }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="post-card-footer">
+              <div class="post-card-meta">
+                {{ post.created_at.strftime('%B %d, %Y') }}<span class="separator">•</span>{{ post.read_time }} min read
+              </div>
+              <div class="post-card-arrow">→</div>
+            </div>
+          </a>
+        {% else %}
+          <!-- Standard Post Card -->
+          <a href="/post/{{ post.slug }}" class="post-card {% if ns.on_left %}border-right{% endif %}" id="post-{{ post.id }}">
+            {% if post.cover_image %}
+            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;max-height:160px;">
+              <img src="{{ post.cover_image }}" alt="{{ post.title }}"
+                   style="width:100%;height:160px;object-fit:cover;filter:brightness(0.85);">
+            </div>
+            {% endif %}
+            <div class="post-card-content">
+              <span class="post-card-category">// {% if post.tags %}{% for t in post.tags %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{{ post.category }}{% endif %}</span>
+              <h2 class="post-card-title">{{ post.title }}</h2>
+              <p class="post-card-excerpt">{{ post.excerpt }}</p>
+            </div>
+            <div class="post-card-footer">
+              <div class="post-card-meta">
+                {{ post.created_at.strftime('%B %d, %Y') }}<span class="separator">•</span>{{ post.read_time }} min read
+              </div>
+              <div class="post-card-arrow">→</div>
+            </div>
+          </a>
+          {% set ns.on_left = not ns.on_left %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p style="grid-column: 1/-1; padding: 5rem; text-align: center; color: var(--muted); font-family: 'DM Mono', monospace;">
+        // No posts found matching this filter.
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- Pagination Controls -->
+  {% if total_pages > 1 %}
+  <div class="pagination" id="pagination-container">
+    {% if has_prev %}
+      <a href="?page={{ page - 1 }}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" class="page-btn prev-btn">&larr; Previous</a>
+    {% else %}
+      <span class="page-btn prev-btn disabled">&larr; Previous</span>
+    {% endif %}
+    
+    <span class="page-indicator">Page {{ page }} of {{ total_pages }}</span>
+    
+    {% if has_next %}
+      <a href="?page={{ page + 1 }}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" class="page-btn next-btn">Next &rarr;</a>
+    {% else %}
+      <span class="page-btn next-btn disabled">Next &rarr;</span>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Search Header/Form -->
+  <section class="search-header">
+    <span class="search-label">// Query database</span>
+    <h1>Search the log</h1>
+    
+    <form action="/search" method="get" class="search-form">
+      <div class="search-input-wrapper">
+        <input 
+          type="text" 
+          name="q" 
+          value="{{ query }}" 
+          placeholder="Type keywords (e.g. rate limiter, LiDAR)..." 
+          class="search-input" 
+          autocomplete="off"
+          autofocus
+        >
+        <button type="submit" class="search-submit-btn" aria-label="Submit search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Search Results -->
+  <div class="search-results-section">
+    {% if query.strip() %}
+      <div class="results-meta">
+        // Found {{ posts|length }} match{{ 'es' if posts|length != 1 else '' }} for "{{ query }}"
+      </div>
+      
+      {% if posts %}
+        <div class="posts-grid" id="posts-grid">
+          {% set ns = namespace(on_left=true) %}
+          {% for post in posts %}
+            <a href="/post/{{ post.slug }}" class="post-card {% if ns.on_left %}border-right{% endif %}" id="post-{{ post.id }}">
+              {% if post.cover_image %}
+              <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;max-height:160px;">
+                <img src="{{ post.cover_image }}" alt="{{ post.title }}"
+                     style="width:100%;height:160px;object-fit:cover;filter:brightness(0.85);">
+              </div>
+              {% endif %}
+              <div class="post-card-content">
+                <span class="post-card-category">// {{ post.category }}</span>
+                <h2 class="post-card-title">{{ post.title }}</h2>
+                <p class="post-card-excerpt">{{ post.excerpt }}</p>
+              </div>
+              <div class="post-card-footer">
+                <div class="post-card-meta">
+                  {{ post.created_at.strftime('%B %d, %Y') }}<span class="separator">•</span>{{ post.read_time }} min read
+                </div>
+                <div class="post-card-arrow">→</div>
+              </div>
+            </a>
+            {% set ns.on_left = not ns.on_left %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="search-empty-state">
+          <p style="padding: 5rem 0; text-align: center; color: var(--muted); font-family: 'DM Mono', monospace;">
+            // No posts found matching "{{ query }}".
+          </p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="search-empty-state">
+        <p style="padding: 5rem 0; text-align: center; color: var(--muted); font-family: 'DM Mono', monospace;">
+          // Search across technical write-ups, essays, and notes...
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Archive{% endblock %}
+
+{% block content %}
+<div class="archive-container">
+  
+  <h1 class="archive-title">Archive.</h1>
+  
+  {% if posts_by_year %}
+    {% for year, year_posts in posts_by_year %}
+      <div class="archive-year-group" id="year-{{ year }}">
+        <h2 class="archive-year-label">{{ year }}</h2>
+        
+        <div class="archive-entries">
+          {% for post in year_posts %}
+            <div class="archive-entry" id="archive-post-{{ post.id }}">
+              <div class="archive-entry-left">
+                <span class="archive-date">{{ post.created_at.strftime('%b %d') }}</span>
+                <a href="/post/{{ post.slug }}" class="archive-entry-title">{{ post.title }}</a>
+              </div>
+              <span class="archive-category-tag">// {{ post.category }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align: center; color: var(--muted); font-family: 'DM Mono', monospace;">
+      // No posts archived yet.
+    </p>
+  {% endif %}
+
+</div>
+{% endblock %}

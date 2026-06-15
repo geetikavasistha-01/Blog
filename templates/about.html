@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <section class="about-grid" id="about-grid">
+    <!-- Left Column -->
+    <div class="about-left">
+      <img src="{{ url_for('static', path='favicon.png') }}?v=1.0" alt="Geeky Kunoichi" class="about-avatar">
+      <span class="about-left-subtitle">// the geeky kunoichi</span>
+    </div>
+
+    <!-- Right Column (Bio) -->
+    <div class="about-right">
+      <p>
+        I'm a CS/ML student who enjoys building systems, working with data, and understanding how complex things fit together.
+      </p>
+      <p>
+        My interests span machine learning, distributed systems, backend engineering, and climate-tech applications that turn data into useful decisions.
+      </p>
+      <p>
+        This blog is my digital log: build notes, technical essays, architecture sketches, lessons learned, and occasional thoughts on engineering, technology, and the process of becoming a better engineer.
+      </p>
+
+      <div class="about-links">
+        <a href="https://github.com/geetikavasistha-01" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://hashnode.com/@ai-for-all" target="_blank" rel="noopener noreferrer">Hashnode</a>
+        <a href="https://medium.com/@geetikavasistha13" target="_blank" rel="noopener noreferrer">Medium</a>
+        <a href="https://discord.gg/3ptJBmFp" target="_blank" rel="noopener noreferrer">Discord</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

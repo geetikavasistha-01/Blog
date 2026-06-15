@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics — GeekyKunoichi{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <div class="admin-header" style="margin-bottom: 2rem;">
+    <h1 class="admin-title">Analytics</h1>
+    <div class="admin-actions">
+      <a href="/admin" class="btn-logout" style="margin-right: 0.5rem; text-decoration: none;">← Dashboard</a>
+      <a href="/admin/media" class="btn-logout" style="margin-right: 0.5rem; text-decoration: none;">Media Library</a>
+      <a href="/admin/logout" class="btn-logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="analytics-intro" style="font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted); margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.08em;">
+    // Self-hosted, privacy-respecting blog visitor logs.
+  </div>
+
+  <!-- Summary Cards Grid -->
+  <div class="analytics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <div class="stat-card" style="border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem;">// Total Views (All-time)</div>
+      <div style="font-size: 2.2rem; font-family: 'Instrument Serif', serif; font-weight: bold; color: var(--accent);">{{ total_views_all_time }}</div>
+    </div>
+    <div class="stat-card" style="border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem;">// Views (Last 7 Days)</div>
+      <div style="font-size: 2.2rem; font-family: 'Instrument Serif', serif; font-weight: bold; color: var(--text);">{{ total_views_7_days }}</div>
+    </div>
+    <div class="stat-card" style="border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem;">// Uniques (Last 7 Days)</div>
+      <div style="font-size: 2.2rem; font-family: 'Instrument Serif', serif; font-weight: bold; color: var(--text);">{{ uniques_7_days }}</div>
+    </div>
+    <div class="stat-card" style="border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem;">// Views (Last 30 Days)</div>
+      <div style="font-size: 2.2rem; font-family: 'Instrument Serif', serif; font-weight: bold; color: var(--text);">{{ total_views_30_days }}</div>
+    </div>
+    <div class="stat-card" style="border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem;">// Uniques (Last 30 Days)</div>
+      <div style="font-size: 2.2rem; font-family: 'Instrument Serif', serif; font-weight: bold; color: var(--text);">{{ uniques_30_days }}</div>
+    </div>
+  </div>
+
+  <!-- SVG Chart Container -->
+  <div style="border: 1px solid var(--border); background: var(--bg2); padding: 2rem; margin-bottom: 4rem; overflow-x: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.5rem; font-style: italic; font-weight: normal; margin: 0;">Traffic History (Last 30 Days)</h3>
+      <div style="display: flex; gap: 1.5rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; text-transform: uppercase;">
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <span style="display: inline-block; width: 12px; height: 12px; background: var(--accent); opacity: 0.35;"></span>
+          <span style="color: var(--muted);">Page Views</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <span style="display: inline-block; width: 12px; height: 12px; background: var(--accent);"></span>
+          <span style="color: var(--text);">Unique Visitors</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-wrapper" style="min-width: {{ chart_width }}px; padding-bottom: 1rem;">
+      <svg width="100%" height="260" viewBox="0 0 {{ chart_width }} 260" style="display: block; overflow: visible;">
+        <!-- Y Axis Gridlines (every 50px up to 200px height) -->
+        <line x1="30" y1="20" x2="{{ chart_width - 10 }}" y2="20" stroke="var(--border)" stroke-dasharray="4" />
+        <line x1="30" y1="70" x2="{{ chart_width - 10 }}" y2="70" stroke="var(--border)" stroke-dasharray="4" stroke-opacity="0.5" />
+        <line x1="30" y1="120" x2="{{ chart_width - 10 }}" y2="120" stroke="var(--border)" stroke-dasharray="4" stroke-opacity="0.5" />
+        <line x1="30" y1="170" x2="{{ chart_width - 10 }}" y2="170" stroke="var(--border)" stroke-dasharray="4" stroke-opacity="0.5" />
+        <line x1="30" y1="220" x2="{{ chart_width - 10 }}" y2="220" stroke="var(--border)" />
+        
+        <!-- Bars -->
+        {% for bar in bars %}
+          <!-- Page Views (faded orange) -->
+          {% if bar.v_height > 0 %}
+            <rect x="{{ bar.x }}" y="{{ bar.v_y }}" width="18" height="{{ bar.v_height }}" fill="var(--accent)" fill-opacity="0.35" rx="2" class="chart-bar">
+              <title>{{ bar.date }}: {{ bar.views }} Page Views</title>
+            </rect>
+          {% endif %}
+          
+          <!-- Unique Visitors (bright orange) -->
+          {% if bar.u_height > 0 %}
+            <rect x="{{ bar.x }}" y="{{ bar.u_y }}" width="18" height="{{ bar.u_height }}" fill="var(--accent)" rx="2" class="chart-bar">
+              <title>{{ bar.date }}: {{ bar.uniques }} Unique Visitors</title>
+            </rect>
+          {% endif %}
+          
+          <!-- X Axis Dates (every 3 days to avoid crowding) -->
+          {% if loop.index0 % 3 == 0 or loop.last %}
+            <text x="{{ bar.x + 9 }}" y="240" fill="var(--muted)" font-family="DM Mono, monospace" font-size="9" text-anchor="middle">// {{ bar.date }}</text>
+          {% endif %}
+        {% endfor %}
+      </svg>
+    </div>
+  </div>
+
+  <!-- Tables Section -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 3rem; margin-bottom: 6rem;">
+    <!-- Top Posts -->
+    <div>
+      <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-style: italic; font-weight: normal; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Top Visited Posts</h3>
+      {% if top_posts %}
+        <table class="admin-posts-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Post Title</th>
+              <th style="text-align: right; width: 80px;">Views</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for post in top_posts %}
+              <tr>
+                <td style="text-align: left;">
+                  <a href="/post/{{ post.slug }}" target="_blank" style="color: var(--text); text-decoration: none; border-bottom: 1px dashed transparent; transition: border 0.2s;" onmouseover="this.style.borderColor='var(--text)'" onmouseout="this.style.borderColor='transparent'">
+                    {{ post.title }}
+                  </a>
+                </td>
+                <td style="text-align: right; font-family: 'DM Mono', monospace; color: var(--accent);">{{ post.views }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p style="font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); text-transform: uppercase;">// No post visits recorded yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Top Referrers -->
+    <div>
+      <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-style: italic; font-weight: normal; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Top Referrals</h3>
+      {% if top_referrers %}
+        <table class="admin-posts-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Referrer Domain</th>
+              <th style="text-align: right; width: 80px;">Views</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for domain, count in top_referrers %}
+              <tr>
+                <td style="text-align: left; font-family: 'DM Mono', monospace;">{{ domain }}</td>
+                <td style="text-align: right; font-family: 'DM Mono', monospace; color: var(--accent);">{{ count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p style="font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); text-transform: uppercase;">// No referral domains tracked yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 3rem; margin-bottom: 6rem;">
+    <!-- Click tracking stats -->
+    <div>
+      <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-style: italic; font-weight: normal; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Link Click Actions</h3>
+      <table class="admin-posts-table" style="width: 100%;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Interaction Target</th>
+            <th style="text-align: right; width: 80px;">Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: left; font-family: 'DM Mono', monospace;">Newsletter Submit CTA</td>
+            <td style="text-align: right; font-family: 'DM Mono', monospace; color: var(--accent);">{{ newsletter_clicks }}</td>
+          </tr>
+          {% for pclick in post_clicks %}
+            <tr>
+              <td style="text-align: left;">
+                <span style="font-family: 'DM Mono', monospace; color: var(--muted);">click:post:</span>
+                <a href="/post/{{ pclick.slug }}" target="_blank" style="color: var(--text); text-decoration: none; border-bottom: 1px dashed transparent; transition: border 0.2s;" onmouseover="this.style.borderColor='var(--text)'" onmouseout="this.style.borderColor='transparent'">
+                  {{ pclick.title }}
+                </a>
+              </td>
+              <td style="text-align: right; font-family: 'DM Mono', monospace; color: var(--accent);">{{ pclick.clicks }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <div>
+      <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-style: italic; font-weight: normal; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Privacy Safeguards</h3>
+      <p style="font-family: 'DM Sans', sans-serif; font-size: 0.9rem; line-height: 1.6; color: var(--muted); margin-bottom: 1rem;">
+        This blog uses a self-hosted analytics mechanism running locally in SQLite. It respects your visitors' privacy:
+      </p>
+      <ul style="font-family: 'DM Sans', sans-serif; font-size: 0.9rem; line-height: 1.6; color: var(--muted); padding-left: 1.2rem;">
+        <li style="margin-bottom: 0.5rem;"><strong>No Third-Party Trackers</strong>: No requests are made to external analytics services (like Google Analytics).</li>
+        <li style="margin-bottom: 0.5rem;"><strong>No Persistent Cookies</strong>: Cookies are strictly restricted to admin sessions; visitors are tracked cookie-free.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>No Raw IP Logs</strong>: Visitor identifiers are securely hashed with a rotating daily salt. It is impossible to reverse-engineer raw IP addresses or track users across days.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .chart-bar {
+    transition: fill-opacity 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+  }
+  .chart-bar:hover {
+    fill-opacity: 0.85;
+    filter: brightness(1.2);
+  }
+</style>
+{% endblock %}

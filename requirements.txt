@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+markdown2
+python-multipart
+python-slugify
+aiofiles
+python-dotenv
+bcrypt==4.1.2
+slowapi==0.1.9
+alembic
+gunicorn

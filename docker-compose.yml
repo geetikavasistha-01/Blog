@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    container_name: geeky_kunoichi_blog
+    ports:
+      - "8000:8000"
+    volumes:
+      - sqlite_data:/app/data
+      - uploads_data:/app/static/uploads
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/blog.db}
+      - ADMIN_PASSWORD_HASH=$ADMIN_PASSWORD_HASH
+      - SECRET_KEY=$SECRET_KEY
+      - GISCUS_REPO=$GISCUS_REPO
+      - GISCUS_REPO_ID=$GISCUS_REPO_ID
+      - GISCUS_CATEGORY=$GISCUS_CATEGORY
+      - GISCUS_CATEGORY_ID=$GISCUS_CATEGORY_ID
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+  uploads_data:
+
