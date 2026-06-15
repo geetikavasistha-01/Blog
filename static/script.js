@@ -281,6 +281,7 @@ function triggerThemeToggle() {
   themeAnimating = true;
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const isLight = !isDark;
   const W = window.innerWidth;
   const H = window.innerHeight;
   const fig = document.getElementById('k-figure');
