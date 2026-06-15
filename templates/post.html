@@ -70,8 +70,8 @@
           script.setAttribute('data-emit-metadata', "0");
           script.setAttribute('data-input-position', "bottom");
           
-          const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-          script.setAttribute('data-theme', isLight ? 'light' : 'transparent_dark');
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          script.setAttribute('data-theme', isDark ? 'transparent_dark' : 'light');
           
           script.setAttribute('data-lang', "en");
           script.setAttribute('crossorigin', "anonymous");

@@ -3,6 +3,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400&display=swap');
 
 :root {
+  --bg: #f2ebd9;
+  --bg2: #e6dec9;
+  --bg3: #dbd2b8;
+  --text: #0c0804;
+  --muted: #3a3228;
+  --accent: #50300e;
+  --border: #bcae97;
+}
+
+[data-theme="dark"] {
   --bg: #121212;
   --bg2: #1c1c1c;
   --bg3: #262626;
@@ -12,15 +22,6 @@
   --border: #444444;
 }
 
-[data-theme="light"] {
-  --bg: #f2ebd9;
-  --bg2: #e6dec9;
-  --bg3: #dbd2b8;
-  --text: #0c0804;
-  --muted: #3a3228;
-  --accent: #50300e;
-  --border: #bcae97;
-}
 
 
 /* Global Reset & Base Styles */

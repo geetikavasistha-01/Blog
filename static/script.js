@@ -280,7 +280,7 @@ function triggerThemeToggle() {
   if (themeAnimating) return;
   themeAnimating = true;
 
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const W = window.innerWidth;
   const H = window.innerHeight;
   const fig = document.getElementById('k-figure');
@@ -373,15 +373,15 @@ function triggerThemeToggle() {
 
     // Switch theme at burst midpoint
     setTimeout(() => {
-      const nextTheme = isLight ? null : 'light';
+      const nextTheme = isDark ? null : 'dark';
       if (nextTheme) {
         document.documentElement.setAttribute('data-theme', nextTheme);
-        localStorage.setItem('gk-theme', 'light');
-        btn.textContent = '☽ Dark Mode';
-      } else {
-        document.documentElement.removeAttribute('data-theme');
         localStorage.setItem('gk-theme', 'dark');
         btn.textContent = '☀ Light Mode';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('gk-theme', 'light');
+        btn.textContent = '☽ Dark Mode';
       }
 
       updateGiscusTheme();
@@ -408,7 +408,7 @@ function triggerThemeToggle() {
 }
 
 function updateGiscusTheme() {
-  const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'transparent_dark';
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'transparent_dark' : 'light';
   const iframe = document.querySelector('iframe.giscus-frame');
   if (!iframe) return;
   iframe.contentWindow.postMessage({
@@ -520,8 +520,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set correct button label on page load
   const btn = document.getElementById('theme-toggle');
   if (btn) {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    btn.textContent = isLight ? '☽ Dark Mode' : '☀ Light Mode';
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    btn.textContent = isDark ? '☀ Light Mode' : '☽ Dark Mode';
   }
 });
 
