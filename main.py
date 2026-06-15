@@ -452,20 +452,14 @@ async def homepage(request: Request, page: int = 1, tag: str = None, db: Session
     else:
         posts = query.order_by(Post.featured.desc(), Post.created_at.desc()).offset(offset).limit(POSTS_PER_PAGE).all()
 
-    # Counts for statistics row in Hero
-    posts_count = db.query(Post).filter(Post.published == True).count()
-    
     # Fetch all tags that are linked to at least one published post, to show in the filter bar
     all_tags = db.query(Tag).join(Tag.posts).filter(Post.published == True).distinct().all()
-    topics_count = len(all_tags)
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "posts": posts,
-            "posts_count": posts_count,
-            "topics_count": topics_count,
             "tags": all_tags,
             "selected_tag": tag,
             "active_tab": "writing",
