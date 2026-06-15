@@ -29,16 +29,16 @@
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}?v=1.7">
+  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}?v=1.8">
   <script>
     (function() {
       const saved = localStorage.getItem('gk-theme');
-      if (saved === 'light' || saved === null) {
-        document.documentElement.setAttribute('data-theme', 'light');
+      if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
     })();
   </script>
-  <script src="{{ url_for('static', path='script.js') }}?v=1.7" defer></script>
+  <script src="{{ url_for('static', path='script.js') }}?v=1.8" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
