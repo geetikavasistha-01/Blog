@@ -83,23 +83,6 @@
 
   <!-- Editorial Footer -->
   <footer>
-    <div class="footer-newsletter-wrapper">
-      <div class="container">
-        <!-- Newsletter signup section -->
-        <div class="footer-newsletter" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
-          <div style="max-width: 420px;">
-            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--text); text-transform: none; letter-spacing: normal;">Subscribe to the newsletter</h4>
-            <p style="font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin: 0; text-transform: none; letter-spacing: normal;">Get occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
-          </div>
-          <form id="newsletter-form" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; min-width: 280px;">
-            <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required 
-                   style="flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.6rem 1rem; border: 1px solid var(--border); background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.25s;">
-            <button type="submit" class="page-btn" style="padding: 0.6rem 1.2rem; font-size: 0.72rem; flex-shrink: 0; background: var(--accent); color: var(--bg); border: none; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: opacity 0.2s;">Subscribe</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
     <!-- Flames Graphic with peeking Kunoichi eyes -->
     <div class="footer-graphic">
       <svg viewBox="0 0 1200 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="footer-flames-svg">
@@ -115,6 +98,19 @@
     <!-- Main Footer Body -->
     <div class="footer-body">
       <div class="container">
+        <!-- Newsletter signup section inside the dark footer -->
+        <div class="footer-newsletter" style="margin-bottom: 4rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+          <div style="max-width: 420px;">
+            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--bg-footer-graphic-stroke); text-transform: none; letter-spacing: normal;">Subscribe to the newsletter</h4>
+            <p style="font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--bg-footer-graphic-stroke); opacity: 0.8; line-height: 1.5; margin: 0; text-transform: none; letter-spacing: normal;">Get occasional deep-dives into systems programming, machine learning, and robotics directly in your inbox.</p>
+          </div>
+          <form id="newsletter-form" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; min-width: 280px;">
+            <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required 
+                   style="flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.6rem 1rem; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.15); color: var(--bg-footer-graphic-stroke); outline: none; transition: border-color 0.25s;">
+            <button type="submit" class="page-btn" style="padding: 0.6rem 1.2rem; font-size: 0.72rem; flex-shrink: 0; background: var(--bg-footer-graphic-stroke); color: var(--bg-footer-graphic); border: none; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: opacity 0.2s;">Subscribe</button>
+          </form>
+        </div>
+
         <div class="footer-grid">
           <!-- Column 1: Navigation -->
           <div class="footer-col footer-nav">
