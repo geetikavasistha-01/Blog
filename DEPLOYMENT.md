@@ -30,4 +30,25 @@ services:
 2. **Secret Credentials**: Change `ADMIN_PASSWORD_HASH` and `SECRET_KEY` in environment variables. Do not use development defaults.
 3. **Analytics Salt**: Set a unique `ANALYTICS_SALT` for hashing visitor logs.
 4. **Scheduled Backups**: Set up a cron job pointing to `/app/scripts/backup_db.sh` for regular gzipped backups of the SQLite database.
+5. **SMTP Configuration**: Configure the SMTP environment variables for sending email updates (see section below).
+
+---
+
+## 3. SMTP & Email Notifications
+
+The blog features an automatic email notification system that broadcasts new posts to subscribers in the background.
+
+### Setup and Environment Variables
+Configure the following keys in your `.env` or container settings:
+* `SMTP_HOST`: Host address of the SMTP server (e.g., `smtp.gmail.com` or `smtp.mailgun.org`).
+* `SMTP_PORT`: Port (usually `587` for TLS/STARTTLS or `465` for SSL).
+* `SMTP_USER`: Authentication username/email.
+* `SMTP_PASSWORD`: Authentication password. For Gmail, use an **App Password** generated from Google Account Settings -> Security -> App Passwords.
+* `SMTP_FROM_EMAIL`: The address from which emails will be sent (usually the same as `SMTP_USER`).
+* `SMTP_USE_TLS`: Set to `true` (default) to enable TLS.
+* `SITE_URL`: The absolute base URL of the blog (e.g., `https://geekykunoichi.com`) used to construct post links.
+* `ADMIN_EMAIL`: The admin's email address. On startup, this email is automatically added as a subscriber for QA and notification monitoring purposes.
+
+### Unsubscribe System
+As a simplification at this stage, the footer of each newsletter contains a note stating "To unsubscribe, reply directly to this email." Unsubscription requests must be handled manually by the admin by removing the email from the `email_subscribers` table or the admin interface.
 

@@ -6,7 +6,7 @@ import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Form, Depends, status, HTTPException, Response, UploadFile, File, Cookie
+from fastapi import FastAPI, Request, Form, Depends, status, HTTPException, Response, UploadFile, File, Cookie, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from database import engine, get_db, SessionLocal, Base
 from models import Post, PageView
+from email_utils import send_new_post_emails
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -255,7 +256,18 @@ async def lifespan(app: FastAPI):
     # Seed database
     db = SessionLocal()
     try:
-        seed_database(db)
+        if os.getenv("SEED_DEMO_DATA", "false").lower() == "true":
+            seed_database(db)
+        
+        # Ensure admin email is subscribed
+        admin_email = os.getenv("ADMIN_EMAIL")
+        if admin_email:
+            from models import EmailSubscriber
+            existing = db.query(EmailSubscriber).filter(EmailSubscriber.email == admin_email).first()
+            if not existing:
+                sub = EmailSubscriber(email=admin_email)
+                db.add(sub)
+                db.commit()
     finally:
         db.close()
     yield
@@ -452,20 +464,14 @@ async def homepage(request: Request, page: int = 1, tag: str = None, db: Session
     else:
         posts = query.order_by(Post.featured.desc(), Post.created_at.desc()).offset(offset).limit(POSTS_PER_PAGE).all()
 
-    # Counts for statistics row in Hero
-    posts_count = db.query(Post).filter(Post.published == True).count()
-    
     # Fetch all tags that are linked to at least one published post, to show in the filter bar
     all_tags = db.query(Tag).join(Tag.posts).filter(Post.published == True).distinct().all()
-    topics_count = len(all_tags)
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "posts": posts,
-            "posts_count": posts_count,
-            "topics_count": topics_count,
             "tags": all_tags,
             "selected_tag": tag,
             "active_tab": "writing",
@@ -675,6 +681,7 @@ async def new_post_get(request: Request):
 @app.post("/admin/post/new")
 async def new_post_post(
     request: Request,
+    background_tasks: BackgroundTasks,
     title: str = Form(...),
     category: str = Form(...),
     excerpt: str = Form(...),
@@ -714,6 +721,10 @@ async def new_post_post(
     new_post.tags = tag_objects
     
     db.add(new_post)
+    db.flush()
+    if new_post.published and not new_post.notification_sent:
+        background_tasks.add_task(send_new_post_emails, new_post.id)
+        new_post.notification_sent = True
     db.commit()
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -733,6 +744,7 @@ async def edit_post_get(request: Request, post_id: int, db: Session = Depends(ge
 async def edit_post_post(
     request: Request,
     post_id: int,
+    background_tasks: BackgroundTasks,
     title: str = Form(...),
     category: str = Form(...),
     excerpt: str = Form(...),
@@ -749,6 +761,8 @@ async def edit_post_post(
     post = db.query(Post).filter(Post.id == post_id).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
+        
+    was_published = post.published
         
     post.title = title
     post.category = category
@@ -773,6 +787,10 @@ async def edit_post_post(
             tag_objects.append(tag)
     post.tags = tag_objects
     
+    if post.published and not was_published and not post.notification_sent:
+        background_tasks.add_task(send_new_post_emails, post.id)
+        post.notification_sent = True
+        
     db.commit()
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
 

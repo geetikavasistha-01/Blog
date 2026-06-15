@@ -125,6 +125,10 @@ header {
 .nav-links a:hover,
 .nav-links a.active {
   color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
 }
 
 .btn-new-post {

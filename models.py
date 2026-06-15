@@ -25,6 +25,7 @@ class Post(Base):
     read_time = Column(Integer)                          # auto-calculated (words / 200)
     featured = Column(Boolean, default=False)
     published = Column(Boolean, default=True)
+    notification_sent = Column(Boolean, default=False, server_default='0', nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     # default=datetime.utcnow is added to avoid NULL values on initial insert
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
