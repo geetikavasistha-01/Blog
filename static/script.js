@@ -830,24 +830,26 @@ function initMediumEditor() {
 
   if (existingBody) { syncAndPreview(); }
 
-  // Cover image upload
-  document.getElementById('cover-file-input')?.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const fd = new FormData();
-    fd.append('file', file);
-    const res = await fetch('/admin/upload-image', { method: 'POST', body: fd });
-    const data = await res.json();
-    if (data.url) {
-      document.getElementById('cover-image-value').value = data.url;
-      document.getElementById('cover-strip').innerHTML = `
-        <div class="cover-preview-inline">
-          <img src="${data.url}" alt="cover">
-          <button type="button" class="remove-cover" onclick="removeCover()">✕</button>
-        </div>
-        <input type="hidden" id="cover-image-value" name="cover_image" value="${data.url}">
-        <input type="file" id="cover-file-input" accept="image/*" style="display:none">
-      `;
+  // Cover image upload (using delegation so it handles dynamically recreated file inputs)
+  document.getElementById('cover-strip')?.addEventListener('change', async (e) => {
+    if (e.target && e.target.id === 'cover-file-input') {
+      const file = e.target.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/admin/upload-image', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        document.getElementById('cover-image-value').value = data.url;
+        document.getElementById('cover-strip').innerHTML = `
+          <div class="cover-preview-inline">
+            <img src="${data.url}" alt="cover">
+            <button type="button" class="remove-cover" onclick="removeCover()">✕</button>
+          </div>
+          <input type="hidden" id="cover-image-value" name="cover_image" value="${data.url}">
+          <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+        `;
+      }
     }
   });
 
