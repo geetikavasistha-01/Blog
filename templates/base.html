@@ -15,15 +15,15 @@
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:title" content="{% block og_title %}GeekyKunoichi{% endblock %}">
   <meta property="og:description" content="{% block og_description %}Technical deep-dives, personal essays, and everything in between.{% endblock %}">
-  <meta property="og:url" content="{% block og_url %}https://geekykunoichi.com{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}https://geekykunoichi.com/static/og-default.png{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ request.base_url }}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ request.base_url }}static/favicon.png{% endblock %}">
   <meta property="og:site_name" content="GeekyKunoichi">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}GeekyKunoichi{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Technical deep-dives, personal essays, and everything in between.{% endblock %}">
-  <meta name="twitter:image" content="{% block twitter_image %}https://geekykunoichi.com/static/og-default.png{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ request.base_url }}static/favicon.png{% endblock %}">
 
   <!-- RSS Feed Discovery -->
   <link rel="alternate" type="application/rss+xml" title="GeekyKunoichi RSS Feed" href="/feed.xml">

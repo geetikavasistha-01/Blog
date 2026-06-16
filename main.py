@@ -514,7 +514,7 @@ async def single_post(request: Request, slug: str, db: Session = Depends(get_db)
             else:
                 og_image = f"{base_url}{src}"
         else:
-            og_image = f"{base_url}static/og-default.png"
+            og_image = f"{base_url}static/favicon.png"
     
     giscus_repo = os.getenv("GISCUS_REPO", "")
     giscus_repo_id = os.getenv("GISCUS_REPO_ID", "")
