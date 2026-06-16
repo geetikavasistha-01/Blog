@@ -641,14 +641,17 @@ async def login_get(request: Request):
 @app.post("/admin/login", response_class=HTMLResponse)
 @limiter.limit("5/minute")
 async def login_post(request: Request, password: str = Form(...)):
-    stored_hash = os.getenv("ADMIN_PASSWORD_HASH", "")
+    stored_hash = os.getenv("ADMIN_PASSWORD_HASH", "").strip().strip("'").strip('"')
     
+    import logging
     is_valid = False
     if stored_hash:
         try:
             is_valid = bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
-        except Exception:
-            pass
+        except Exception as e:
+            logging.error(f"Bcrypt verification failed: {e}")
+    else:
+        logging.error("ADMIN_PASSWORD_HASH is empty or not set in environment.")
             
     if is_valid:
         response = RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
