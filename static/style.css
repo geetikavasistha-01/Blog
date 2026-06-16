@@ -301,6 +301,18 @@ header {
   }
 }
 
+/* Card Cover Styles */
+.card-cover {
+  width: 100%;
+  overflow: hidden;
+}
+
+.card-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Post Card */
 .post-card {
   padding: 2.5rem;

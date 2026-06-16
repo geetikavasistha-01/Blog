@@ -39,9 +39,9 @@
         {% if post.featured and (not selected_tag or selected_tag == 'All') %}
           <a href="/post/{{ post.slug }}" class="post-card featured" id="post-{{ post.id }}">
             {% if post.cover_image and post.cover_image != 'None' %}
-            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;max-height:160px;">
+            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;width:100%;">
               <img src="{{ post.cover_image }}" alt="{{ post.title }}"
-                   style="width:100%;height:160px;object-fit:cover;filter:brightness(0.85);">
+                   style="width:100%;height:auto;display:block;filter:brightness(0.85);">
             </div>
             {% endif %}
             <div class="post-card-content">
@@ -67,9 +67,9 @@
           <!-- Standard Post Card -->
           <a href="/post/{{ post.slug }}" class="post-card {% if ns.on_left %}border-right{% endif %}" id="post-{{ post.id }}">
             {% if post.cover_image and post.cover_image != 'None' %}
-            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;max-height:160px;">
+            <div class="card-cover" style="margin-bottom:1rem;overflow:hidden;width:100%;">
               <img src="{{ post.cover_image }}" alt="{{ post.title }}"
-                   style="width:100%;height:160px;object-fit:cover;filter:brightness(0.85);">
+                   style="width:100%;height:auto;display:block;filter:brightness(0.85);">
             </div>
             {% endif %}
             <div class="post-card-content">
