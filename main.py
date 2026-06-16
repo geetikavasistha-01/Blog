@@ -390,7 +390,8 @@ async def general_exception_handler(request: Request, exc: Exception):
 # robots.txt Route
 @app.get("/robots.txt", response_class=Response, include_in_schema=False)
 def robots_txt():
-    content = "User-agent: *\nAllow: /\nSitemap: https://geekykunoichi.com/sitemap.xml\n"
+    site_url = os.getenv("SITE_URL", "https://geekykunoichi.com").rstrip("/")
+    content = f"User-agent: *\nAllow: /\nSitemap: {site_url}/sitemap.xml\n"
     return Response(content=content, media_type="text/plain")
 
 # favicon.ico Route
@@ -940,7 +941,12 @@ async def admin_analytics(request: Request, db: Session = Depends(get_db)):
         PageView.referrer != ""
     ).all()
     
-    local_domains = ["geekykunoichi.com", "localhost", "127.0.0.1"]
+    site_url = os.getenv("SITE_URL", "geekykunoichi.com")
+    parsed_site = urlparse(site_url)
+    site_domain = parsed_site.netloc or parsed_site.path
+    if site_domain.startswith("www."):
+        site_domain = site_domain[4:]
+    local_domains = [site_domain, "localhost", "127.0.0.1"]
     domain_counts = {}
     for (ref,) in referrers_raw:
         try:
@@ -1236,7 +1242,7 @@ async def search_page(request: Request, q: str = "", db: Session = Depends(get_d
 @app.get("/sitemap.xml", include_in_schema=False)
 def sitemap(db: Session = Depends(get_db)):
     posts = db.query(Post).filter(Post.published == True).all()
-    base = "https://geekykunoichi.com"
+    base = os.getenv("SITE_URL", "https://geekykunoichi.com").rstrip("/")
 
     urls = [
         f"""
@@ -1279,7 +1285,7 @@ def sitemap(db: Session = Depends(get_db)):
 @app.get("/feed.xml", include_in_schema=False)
 def rss_feed(db: Session = Depends(get_db)):
     posts = db.query(Post).filter(Post.published == True).order_by(Post.created_at.desc()).limit(20).all()
-    base = "https://geekykunoichi.com"
+    base = os.getenv("SITE_URL", "https://geekykunoichi.com").rstrip("/")
     now = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
 
     items = []
