@@ -378,9 +378,9 @@ async def general_exception_handler(request: Request, exc: Exception):
     import logging
     logging.error(f"Unhandled exception: {exc}", exc_info=True)
     return templates.TemplateResponse(
+        request,
         "error.html",
         {
-            "request": request,
             "status_code": 500,
             "detail": "An unexpected server error occurred. Please try again later."
         },
@@ -407,9 +407,9 @@ def trigger_500():
 def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
     if "/admin" in request.url.path:
         return templates.TemplateResponse(
+            request,
             "admin/login.html",
             {
-                "request": request,
                 "error": "Too many login attempts. Please try again in a minute."
             },
             status_code=status.HTTP_429_TOO_MANY_REQUESTS
@@ -422,14 +422,15 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404:
         return templates.TemplateResponse(
+            request,
             "404.html",
-            {"request": request},
+            {},
             status_code=404
         )
     return templates.TemplateResponse(
+        request,
         "error.html",
         {
-            "request": request,
             "status_code": exc.status_code,
             "detail": exc.detail
         },
@@ -468,9 +469,9 @@ async def homepage(request: Request, page: int = 1, tag: str = None, db: Session
     all_tags = db.query(Tag).join(Tag.posts).filter(Post.published == True).distinct().all()
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
-            "request": request,
             "posts": posts,
             "tags": all_tags,
             "selected_tag": tag,
@@ -520,9 +521,9 @@ async def single_post(request: Request, slug: str, db: Session = Depends(get_db)
     giscus_category_id = os.getenv("GISCUS_CATEGORY_ID", "")
     
     return templates.TemplateResponse(
+        request,
         "post.html",
         {
-            "request": request,
             "post": post,
             "og_image": og_image,
             "active_tab": "writing",
@@ -536,9 +537,9 @@ async def single_post(request: Request, slug: str, db: Session = Depends(get_db)
 @app.get("/about", response_class=HTMLResponse)
 async def about_page(request: Request):
     return templates.TemplateResponse(
+        request,
         "about.html",
         {
-            "request": request,
             "active_tab": "about"
         }
     )
@@ -559,9 +560,9 @@ async def archive_page(request: Request, db: Session = Depends(get_db)):
     sorted_posts_by_year = sorted(posts_by_year.items(), key=lambda x: x[0], reverse=True)
 
     return templates.TemplateResponse(
+        request,
         "archive.html",
         {
-            "request": request,
             "posts_by_year": sorted_posts_by_year,
             "active_tab": "archive"
         }
@@ -620,9 +621,9 @@ async def admin_dashboard(
             
     posts = query.order_by(Post.created_at.desc()).all()
     return templates.TemplateResponse(
+        request,
         "admin/dashboard.html",
         {
-            "request": request,
             "posts": posts,
             "active_tab": "admin",
             "q": q or "",
@@ -634,7 +635,7 @@ async def admin_dashboard(
 async def login_get(request: Request):
     if is_authenticated(request):
         return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse("admin/login.html", {"request": request, "error": None})
+    return templates.TemplateResponse(request, "admin/login.html", {"error": None})
 
 @app.post("/admin/login", response_class=HTMLResponse)
 @limiter.limit("5/minute")
@@ -661,8 +662,9 @@ async def login_post(request: Request, password: str = Form(...)):
         return response
     
     return templates.TemplateResponse(
+        request,
         "admin/login.html", 
-        {"request": request, "error": "// incorrect password"},
+        {"error": "// incorrect password"},
         status_code=401
     )
 
@@ -676,7 +678,7 @@ async def logout():
 async def new_post_get(request: Request):
     if not is_authenticated(request):
         return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse("admin/editor.html", {"request": request, "post": None, "tags_str": ""})
+    return templates.TemplateResponse(request, "admin/editor.html", {"post": None, "tags_str": ""})
 
 @app.post("/admin/post/new")
 async def new_post_post(
@@ -738,7 +740,7 @@ async def edit_post_get(request: Request, post_id: int, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="Post not found")
         
     tags_str = ", ".join([t.name for t in post.tags])
-    return templates.TemplateResponse("admin/editor.html", {"request": request, "post": post, "tags_str": tags_str})
+    return templates.TemplateResponse(request, "admin/editor.html", {"post": post, "tags_str": tags_str})
 
 @app.post("/admin/post/{post_id}/edit")
 async def edit_post_post(
@@ -856,9 +858,9 @@ async def admin_media(request: Request, db: Session = Depends(get_db)):
     files_data.sort(key=lambda x: (x["referenced"], -x["size_kb"]))
     
     return templates.TemplateResponse(
+        request,
         "admin/media.html",
         {
-            "request": request,
             "files": files_data,
             "active_tab": "admin"
         }
@@ -1041,9 +1043,9 @@ async def admin_analytics(request: Request, db: Session = Depends(get_db)):
         })
         
     return templates.TemplateResponse(
+        request,
         "admin/analytics.html",
         {
-            "request": request,
             "total_views_all_time": total_views_all_time,
             "total_views_7_days": total_views_7_days,
             "total_views_30_days": total_views_30_days,
@@ -1222,9 +1224,9 @@ async def search_page(request: Request, q: str = "", db: Session = Depends(get_d
         ).order_by(Post.created_at.desc()).all()
         
     return templates.TemplateResponse(
+        request,
         "search.html",
         {
-            "request": request,
             "posts": posts,
             "query": q,
             "active_tab": "search"
