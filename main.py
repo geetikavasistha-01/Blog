@@ -589,7 +589,31 @@ async def upload_image(
     if len(contents) > 5 * 1024 * 1024:
         return JSONResponse({"error": "File too large. Max 5MB."}, status_code=400)
 
-    # Generate unique filename
+    # Check for Cloudinary configuration
+    cloudinary_url = os.getenv("CLOUDINARY_URL")
+    if cloudinary_url:
+        import cloudinary
+        import cloudinary.uploader
+        try:
+            cloudinary.config(cloudinary_url=cloudinary_url)
+            # Upload the file bytes directly to Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                contents,
+                folder="geekykunoichi_blog",
+                resource_type="image"
+            )
+            # Return the secure (https) URL from Cloudinary
+            return JSONResponse({
+                "url": upload_result.get("secure_url"),
+                "filename": upload_result.get("public_id")
+            })
+        except Exception as e:
+            import logging
+            logging.error(f"Cloudinary upload failed: {e}", exc_info=True)
+            # Fall back to local file upload if Cloudinary fails
+            pass
+
+    # Generate unique filename for local fallback
     ext = file.filename.rsplit(".", 1)[-1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
     filepath = f"static/uploads/{filename}"

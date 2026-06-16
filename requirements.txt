@@ -12,3 +12,4 @@ slowapi==0.1.9
 alembic
 gunicorn
 psycopg2-binary
+cloudinary
