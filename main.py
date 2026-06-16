@@ -725,6 +725,9 @@ async def new_post_post(
     if not is_authenticated(request):
         return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
 
+    if cover_image == "None" or cover_image == "null" or not cover_image:
+        cover_image = None
+
     new_post = Post(
         title=title,
         category=category,
@@ -794,6 +797,9 @@ async def edit_post_post(
         
     was_published = post.published
         
+    if cover_image == "None" or cover_image == "null" or not cover_image:
+        cover_image = None
+
     post.title = title
     post.category = category
     post.excerpt = excerpt

@@ -19,7 +19,7 @@
         </label>
         <select name="category" id="category" class="category-select">
           {% for cat in ['Systems', 'ML & AI', 'Robotics', 'Career', 'Life'] %}
-          <option value="{{ cat }}" {% if post and post.category == cat %}selected{% endif %}>{{ cat }}</option>
+          <option value="{{ cat }}" {% if post and post.category==cat %}selected{% endif %}>{{ cat }}</option>
           {% endfor %}
         </select>
         <button type="button" class="publish-btn" onclick="submitPost()">
@@ -30,14 +30,15 @@
 
     <div class="writing-area">
       <input type="text" id="post-title" class="title-input" placeholder="Title"
-             value="{{ post.title if post else '' }}" autocomplete="off">
+        value="{{ post.title if post else '' }}" autocomplete="off">
       <input type="text" id="post-excerpt" class="excerpt-input" placeholder="Write a short description..."
-             value="{{ post.excerpt if post else '' }}" autocomplete="off">
-      <input type="text" id="post-tags" class="excerpt-input" placeholder="Tags (comma-separated, e.g., systems, golang)"
-             value="{{ tags_str }}" style="font-family: 'DM Mono', monospace; font-size: 0.82rem;" autocomplete="off">
+        value="{{ post.excerpt if post else '' }}" autocomplete="off">
+      <input type="text" id="post-tags" class="excerpt-input"
+        placeholder="Tags (comma-separated, e.g., systems, golang)" value="{{ tags_str }}"
+        style="font-family: 'DM Mono', monospace; font-size: 0.82rem;" autocomplete="off">
 
       <div class="cover-strip" id="cover-strip">
-        {% if post and post.cover_image %}
+        {% if post and post.cover_image and post.cover_image != 'None' %}
         <div class="cover-preview-inline">
           <img src="{{ post.cover_image }}" alt="cover">
           <button type="button" class="remove-cover" onclick="removeCover()">✕</button>
@@ -48,13 +49,14 @@
         </button>
         {% endif %}
         <input type="file" id="cover-file-input" accept="image/*" style="display:none">
-        <input type="hidden" id="cover-image-value" name="cover_image" value="{{ post.cover_image if post else '' }}">
+        <input type="hidden" id="cover-image-value" name="cover_image"
+          value="{{ post.cover_image if post and post.cover_image and post.cover_image != 'None' else '' }}">
       </div>
 
       <div class="writing-divider"></div>
 
-      <div id="editor-content" class="content-editable"
-           contenteditable="true" data-placeholder="Tell your story..."></div>
+      <div id="editor-content" class="content-editable" contenteditable="true" data-placeholder="Tell your story...">
+      </div>
       <textarea id="body-hidden" name="body" style="display:none">{{ post.body if post else '' }}</textarea>
     </div>
 
