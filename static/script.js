@@ -842,8 +842,15 @@ function initMediumEditor() {
         try {
           const res = await fetch('/admin/upload-image', { method: 'POST', body: fd });
           if (!res.ok) {
-            console.error(`Upload failed with status: ${res.status}`);
-            alert('Upload failed. Please check file type and size.');
+            let errorMsg = 'Please check file type and size.';
+            try {
+              const errData = await res.json();
+              if (errData && errData.error) {
+                errorMsg = errData.error;
+              }
+            } catch (e) {}
+            console.error(`Upload failed with status: ${res.status} - ${errorMsg}`);
+            alert(`Upload failed: ${errorMsg}`);
             return;
           }
           const data = await res.json();
