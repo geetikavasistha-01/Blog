@@ -11,3 +11,4 @@ bcrypt==4.1.2
 slowapi==0.1.9
 alembic
 gunicorn
+psycopg2-binary
