@@ -831,34 +831,80 @@ function initMediumEditor() {
   if (existingBody) { syncAndPreview(); }
 
   // Cover image upload (using delegation so it handles dynamically recreated file inputs)
-  document.getElementById('cover-strip')?.addEventListener('change', async (e) => {
-    if (e.target && e.target.id === 'cover-file-input') {
-      const file = e.target.files[0];
-      if (!file) return;
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/admin/upload-image', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.url) {
-        document.getElementById('cover-image-value').value = data.url;
-        document.getElementById('cover-strip').innerHTML = `
-          <div class="cover-preview-inline">
-            <img src="${data.url}" alt="cover">
-            <button type="button" class="remove-cover" onclick="removeCover()">✕</button>
-          </div>
-          <input type="hidden" id="cover-image-value" name="cover_image" value="${data.url}">
+  const coverStrip = document.getElementById('cover-strip');
+  if (coverStrip) {
+    coverStrip.addEventListener('change', async (e) => {
+      if (e.target && e.target.id === 'cover-file-input') {
+        const file = e.target.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        try {
+          const res = await fetch('/admin/upload-image', { method: 'POST', body: fd });
+          if (!res.ok) {
+            console.error(`Upload failed with status: ${res.status}`);
+            alert('Upload failed. Please check file type and size.');
+            return;
+          }
+          const data = await res.json();
+          if (!data || !data.url) {
+            alert('Upload response did not contain a valid image URL.');
+            return;
+          }
+          
+          // Set cover-image-value value before modifying any other DOM elements
+          const coverVal = document.getElementById('cover-image-value');
+          if (coverVal) {
+            coverVal.value = data.url;
+          }
+          
+          // Re-render #cover-strip to show thumbnail and a remove button with id remove-cover
+          coverStrip.innerHTML = `
+            <div class="cover-preview-inline">
+              <img src="${data.url}" alt="cover">
+              <button type="button" class="remove-cover" id="remove-cover">✕</button>
+            </div>
+            <input type="hidden" id="cover-image-value" name="cover_image" value="${data.url}">
+            <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+          `;
+        } catch (err) {
+          console.error('Error during image upload:', err);
+          alert('An error occurred during image upload.');
+        }
+      }
+    });
+
+    // Handle clicking the remove button
+    coverStrip.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('#remove-cover');
+      if (removeBtn) {
+        const coverVal = document.getElementById('cover-image-value');
+        if (coverVal) {
+          coverVal.value = '';
+        }
+        coverStrip.innerHTML = `
+          <button type="button" class="add-cover-btn" onclick="document.getElementById('cover-file-input').click()">+ Add cover image</button>
           <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+          <input type="hidden" id="cover-image-value" name="cover_image" value="">
         `;
       }
-    }
-  });
+    });
+  }
 
+  // Fallback for editor page templates referencing window.removeCover directly
   window.removeCover = function () {
-    document.getElementById('cover-strip').innerHTML = `
-      <button type="button" class="add-cover-btn" onclick="document.getElementById('cover-file-input').click()">+ Add cover image</button>
-      <input type="file" id="cover-file-input" accept="image/*" style="display:none">
-      <input type="hidden" id="cover-image-value" name="cover_image" value="">
-    `;
+    const coverVal = document.getElementById('cover-image-value');
+    if (coverVal) {
+      coverVal.value = '';
+    }
+    const cStrip = document.getElementById('cover-strip');
+    if (cStrip) {
+      cStrip.innerHTML = `
+        <button type="button" class="add-cover-btn" onclick="document.getElementById('cover-file-input').click()">+ Add cover image</button>
+        <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+        <input type="hidden" id="cover-image-value" name="cover_image" value="">
+      `;
+    }
   };
 
   // Submit post

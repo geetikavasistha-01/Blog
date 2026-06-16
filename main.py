@@ -573,55 +573,70 @@ async def archive_page(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/admin/upload-image")
 async def upload_image(
-    file: UploadFile = File(...),
+    file: UploadFile = File(None),
     geeky_session: str = Cookie(default=None)
 ):
-    if geeky_session != "authenticated":
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    import traceback
+    try:
+        if geeky_session != "authenticated":
+            return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    # Validate file type
-    allowed = {"image/jpeg", "image/png", "image/webp", "image/gif"}
-    if file.content_type not in allowed:
-        return JSONResponse({"error": "Invalid file type. JPG, PNG, WEBP, GIF only."}, status_code=400)
+        # Validate the uploaded file
+        if file is None or not file.filename:
+            return JSONResponse({"error": "No file uploaded"}, status_code=400)
 
-    # Validate file size (max 5MB)
-    contents = await file.read()
-    if len(contents) > 5 * 1024 * 1024:
-        return JSONResponse({"error": "File too large. Max 5MB."}, status_code=400)
+        # Validate MIME type
+        allowed = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+        if file.content_type not in allowed:
+            return JSONResponse({"error": "Invalid file type. JPG, PNG, WEBP, GIF only."}, status_code=400)
 
-    # Check for Cloudinary configuration
-    cloudinary_url = os.getenv("CLOUDINARY_URL")
-    if cloudinary_url:
-        import cloudinary
-        import cloudinary.uploader
-        try:
-            cloudinary.config(cloudinary_url=cloudinary_url)
-            # Upload the file bytes directly to Cloudinary
-            upload_result = cloudinary.uploader.upload(
-                contents,
-                folder="geekykunoichi_blog",
-                resource_type="image"
-            )
-            # Return the secure (https) URL from Cloudinary
-            return JSONResponse({
-                "url": upload_result.get("secure_url"),
-                "filename": upload_result.get("public_id")
-            })
-        except Exception as e:
-            import logging
-            logging.error(f"Cloudinary upload failed: {e}", exc_info=True)
-            # Fall back to local file upload if Cloudinary fails
-            pass
+        # Validate file size (max 5MB)
+        contents = await file.read()
+        if len(contents) > 5 * 1024 * 1024:
+            return JSONResponse({"error": "File too large. Max 5MB."}, status_code=400)
 
-    # Generate unique filename for local fallback
-    ext = file.filename.rsplit(".", 1)[-1].lower()
-    filename = f"{uuid.uuid4().hex}.{ext}"
-    filepath = f"static/uploads/{filename}"
+        # Check for Cloudinary configuration
+        cloudinary_url = os.getenv("CLOUDINARY_URL")
+        if cloudinary_url:
+            import cloudinary
+            import cloudinary.uploader
+            try:
+                cloudinary.config(cloudinary_url=cloudinary_url)
+            except Exception as config_err:
+                traceback.print_exc()
+                return JSONResponse({"error": f"Cloudinary configuration failed: {config_err}"}, status_code=500)
 
-    async with aiofiles.open(filepath, "wb") as f:
-        await f.write(contents)
+            try:
+                upload_result = cloudinary.uploader.upload(
+                    contents,
+                    folder="geekykunoichi_blog",
+                    resource_type="image"
+                )
+                url = upload_result.get("secure_url")
+                if not url:
+                    return JSONResponse({"error": "Cloudinary upload did not return a URL"}, status_code=500)
+                return JSONResponse({
+                    "url": url,
+                    "filename": upload_result.get("public_id")
+                })
+            except Exception as upload_err:
+                traceback.print_exc()
+                return JSONResponse({"error": f"Cloudinary upload failed: {upload_err}"}, status_code=500)
 
-    return JSONResponse({"url": f"/static/uploads/{filename}", "filename": filename})
+        # Local filesystem fallback when CLOUDINARY_URL is not set
+        os.makedirs("static/uploads", exist_ok=True)
+        ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "png"
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        filepath = f"static/uploads/{filename}"
+
+        async with aiofiles.open(filepath, "wb") as f:
+            await f.write(contents)
+
+        return JSONResponse({"url": f"/static/uploads/{filename}"})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(
